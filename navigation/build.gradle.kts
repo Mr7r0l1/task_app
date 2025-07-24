@@ -1,11 +1,9 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt)
     kotlin("kapt")
+    alias(libs.plugins.kotlin.compose)
 }
 
 
@@ -14,17 +12,14 @@ hilt {
 }
 
 android {
-    namespace = "com.example.task_app"
+    namespace = "com.example.navigation"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.task_app"
         minSdk = 26
-        targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildTypes {
@@ -49,12 +44,13 @@ android {
 }
 
 dependencies {
+    //Screens
+    implementation(project(":features:home"))
+    implementation(project(":features:newTask"))
 
-    implementation(project(":core:data"))
     implementation(project(":core:utils"))
-    implementation(project(":core:design"))
-    implementation(project(":navigation"))
-
+    implementation(project(":core:data"))
+    //UI
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -71,6 +67,11 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    // COMPOSE
+    implementation(libs.compose.ui)
+    implementation(libs.compose.ui.tooling.preview)
+    implementation(libs.activity.compose)
+    implementation(libs.material.icons.extended)
 
     // NAVIGATION
     implementation(libs.androidx.navigation.compose)
