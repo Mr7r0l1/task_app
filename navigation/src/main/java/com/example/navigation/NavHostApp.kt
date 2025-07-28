@@ -8,6 +8,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,7 +38,6 @@ import com.example.utils.PreferencesManager
 @Composable
 fun NavHostApp(
     navController: NavHostController,
-    preferencesManager: PreferencesManager,
     startDestination: ScreenRoutes = ScreenRoutes.HOME
 ) {
     var selectedDestination by rememberSaveable { mutableStateOf(startDestination) }
@@ -61,7 +61,12 @@ fun NavHostApp(
             when (targetRoute) {
                 ScreenRoutes.HOME -> {
                     TopAppBar(
-                        title = { Text("Inicio") }
+                        title = {
+                            Row {
+                                Text("Inicio")
+                            }
+
+                        }
                     )
                 }
                 ScreenRoutes.NEW_TASK -> {
@@ -69,7 +74,6 @@ fun NavHostApp(
                         title = { Text("Agregar tarea") }
                     )
                 }
-                else -> {} // No top bar for other routes
             }
         }
     }) { innerPadding ->

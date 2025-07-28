@@ -1,18 +1,11 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.hilt)
-    alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.compose)
 }
 
-
-hilt {
-    enableAggregatingTask = false
-}
-
 android {
-    namespace = "com.example.utils"
+    namespace = "com.example.components"
     compileSdk = 36
 
     defaultConfig {
@@ -43,18 +36,8 @@ android {
 }
 
 dependencies {
-
-
-    // HILT
-    implementation(libs.hilt.android)
-    implementation(libs.androidx.material3.android)
-    ksp(libs.hilt.compiler)
-    implementation(libs.androidx.hilt.navigation.compose)
-
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    implementation(libs.material3) // or latest
+    implementation("androidx.compose.material:material-icons-extended")
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.compose.ui)
 }

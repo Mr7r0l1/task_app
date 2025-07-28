@@ -1,0 +1,116 @@
+kotlin version: 2.2.0
+error message: java.lang.RuntimeException: Exception while generating code for:
+FUN name:AddTask visibility:public modality:FINAL returnType:kotlin.Unit
+  VALUE_PARAMETER kind:Regular name:taskToAdd index:0 type:com.example.data.TaskInfo
+  BLOCK_BODY
+    VAR name:context type:android.content.Context [val]
+      CALL 'public final fun <get-current> (): T of androidx.compose.runtime.CompositionLocal [inline] declared in androidx.compose.runtime.CompositionLocal' type=android.content.Context origin=GET_PROPERTY
+        ARG <this>: TYPE_OP type=androidx.compose.runtime.CompositionLocal<T of androidx.compose.runtime.CompositionLocal> origin=IMPLICIT_CAST typeOperand=androidx.compose.runtime.CompositionLocal<T of androidx.compose.runtime.CompositionLocal>
+          CALL 'public final fun <get-LocalContext> (): androidx.compose.runtime.ProvidableCompositionLocal<android.content.Context> declared in androidx.compose.ui.platform.AndroidCompositionLocals_androidKt' type=androidx.compose.runtime.ProvidableCompositionLocal<android.content.Context> origin=GET_PROPERTY
+    VAR name:prefsManager type:com.example.utils.PreferencesManager [val]
+      CALL 'public final fun remember <T> (calculation: @[DisallowComposableCalls] kotlin.Function0<T of androidx.compose.runtime.ComposablesKt.remember>): T of androidx.compose.runtime.ComposablesKt.remember [inline] declared in androidx.compose.runtime.ComposablesKt' type=com.example.utils.PreferencesManager origin=null
+        TYPE_ARG T: com.example.utils.PreferencesManager
+        ARG calculation: BLOCK type=kotlin.Function0<com.example.utils.PreferencesManager> origin=LAMBDA
+          COMPOSITE type=kotlin.Unit origin=null
+          FUNCTION_REFERENCE 'private final fun AddTask$lambda$0 ($context: android.content.Context): com.example.utils.PreferencesManager declared in com.example.data.TaskHandlerKt' type=kotlin.Function0<com.example.utils.PreferencesManager> origin=INLINE_LAMBDA reflectionTarget=null
+            ARG $context: GET_VAR 'val context: android.content.Context [val] declared in com.example.data.TaskHandlerKt.AddTask' type=android.content.Context origin=null
+    VAR name:currentTasks type:com.example.data.TaskHolder [val]
+      CALL 'public final fun decodeFromString <T> (string: kotlin.String): T of kotlinx.serialization.json.Json.decodeFromString [inline] declared in kotlinx.serialization.json.Json' type=com.example.data.TaskHolder origin=null
+        TYPE_ARG T: com.example.data.TaskHolder
+        ARG <this>: TYPE_OP type=kotlinx.serialization.json.Json origin=IMPLICIT_CAST typeOperand=kotlinx.serialization.json.Json
+          GET_FIELD 'FIELD FIELD_FOR_OBJECT_INSTANCE name:Default type:kotlinx.serialization.json.Json.Default visibility:public [final,static] declared in kotlinx.serialization.json.Json' type=kotlinx.serialization.json.Json.Default origin=null
+        ARG string: CALL 'public final fun GetTaskData (): kotlin.String declared in com.example.utils.PreferencesManager' type=kotlin.String origin=null
+          ARG <this>: GET_VAR 'val prefsManager: com.example.utils.PreferencesManager [val] declared in com.example.data.TaskHandlerKt.AddTask' type=com.example.utils.PreferencesManager origin=null
+    VAR name:newTasks type:kotlin.collections.List<com.example.data.TaskInfo> [val]
+      CALL 'public final fun plus <T> (<this>: kotlin.collections.Collection<T of kotlin.collections.CollectionsKt.plus>, element: T of kotlin.collections.CollectionsKt.plus): kotlin.collections.List<T of kotlin.collections.CollectionsKt.plus> [operator] declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<com.example.data.TaskInfo> origin=null
+        TYPE_ARG T: com.example.data.TaskInfo
+        ARG <this>: CALL 'public final fun <get-list> (): kotlin.collections.List<com.example.data.TaskInfo> declared in com.example.data.TaskHolder' type=kotlin.collections.List<com.example.data.TaskInfo> origin=GET_PROPERTY
+          ARG <this>: GET_VAR 'val currentTasks: com.example.data.TaskHolder [val] declared in com.example.data.TaskHandlerKt.AddTask' type=com.example.data.TaskHolder origin=null
+        ARG element: GET_VAR 'taskToAdd: com.example.data.TaskInfo declared in com.example.data.TaskHandlerKt.AddTask' type=com.example.data.TaskInfo origin=null
+    VAR name:serializedTasks type:kotlin.String [val]
+      CALL 'public final fun encodeToString <T> (value: T of kotlinx.serialization.json.Json.encodeToString): kotlin.String [inline] declared in kotlinx.serialization.json.Json' type=kotlin.String origin=null
+        TYPE_ARG T: kotlin.collections.List<com.example.data.TaskInfo>
+        ARG <this>: TYPE_OP type=kotlinx.serialization.json.Json origin=IMPLICIT_CAST typeOperand=kotlinx.serialization.json.Json
+          GET_FIELD 'FIELD FIELD_FOR_OBJECT_INSTANCE name:Default type:kotlinx.serialization.json.Json.Default visibility:public [final,static] declared in kotlinx.serialization.json.Json' type=kotlinx.serialization.json.Json.Default origin=null
+        ARG value: GET_VAR 'val newTasks: kotlin.collections.List<com.example.data.TaskInfo> [val] declared in com.example.data.TaskHandlerKt.AddTask' type=kotlin.collections.List<com.example.data.TaskInfo> origin=null
+    CALL 'public final fun SaveTaskData (data: kotlin.String): kotlin.Unit declared in com.example.utils.PreferencesManager' type=kotlin.Unit origin=null
+      ARG <this>: GET_VAR 'val prefsManager: com.example.utils.PreferencesManager [val] declared in com.example.data.TaskHandlerKt.AddTask' type=com.example.utils.PreferencesManager origin=null
+      ARG data: GET_VAR 'val serializedTasks: kotlin.String [val] declared in com.example.data.TaskHandlerKt.AddTask' type=kotlin.String origin=null
+
+	at org.jetbrains.kotlin.backend.jvm.codegen.FunctionCodegen.generate(FunctionCodegen.kt:50)
+	at org.jetbrains.kotlin.backend.jvm.codegen.FunctionCodegen.generate$default(FunctionCodegen.kt:43)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen.generateMethodNode(ClassCodegen.kt:422)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen.generateMethod(ClassCodegen.kt:439)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen.generate(ClassCodegen.kt:164)
+	at org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory.generateFile(JvmIrCodegenFactory.kt:419)
+	at org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory.invokeCodegen(JvmIrCodegenFactory.kt:388)
+	at org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler.runCodegen$cli(KotlinToJVMBytecodeCompiler.kt:432)
+	at org.jetbrains.kotlin.cli.pipeline.jvm.JvmBackendPipelinePhase.executePhase(JvmBackendPipelinePhase.kt:95)
+	at org.jetbrains.kotlin.cli.pipeline.jvm.JvmBackendPipelinePhase.executePhase(JvmBackendPipelinePhase.kt:36)
+	at org.jetbrains.kotlin.cli.pipeline.jvm.JvmBackendPipelinePhase.executePhase(JvmBackendPipelinePhase.kt:29)
+	at org.jetbrains.kotlin.cli.pipeline.PipelinePhase.phaseBody(PipelinePhase.kt:68)
+	at org.jetbrains.kotlin.cli.pipeline.PipelinePhase.phaseBody(PipelinePhase.kt:58)
+	at org.jetbrains.kotlin.config.phaser.NamedCompilerPhase.invoke(CompilerPhase.kt:102)
+	at org.jetbrains.kotlin.backend.common.phaser.CompositePhase.invoke(PhaseBuilders.kt:22)
+	at org.jetbrains.kotlin.config.phaser.CompilerPhaseKt.invokeToplevel(CompilerPhase.kt:53)
+	at org.jetbrains.kotlin.cli.pipeline.AbstractCliPipeline.runPhasedPipeline(AbstractCliPipeline.kt:109)
+	at org.jetbrains.kotlin.cli.pipeline.AbstractCliPipeline.execute(AbstractCliPipeline.kt:68)
+	at org.jetbrains.kotlin.cli.jvm.K2JVMCompiler.doExecutePhased(K2JVMCompiler.kt:78)
+	at org.jetbrains.kotlin.cli.jvm.K2JVMCompiler.doExecutePhased(K2JVMCompiler.kt:44)
+	at org.jetbrains.kotlin.cli.common.CLICompiler.execImpl(CLICompiler.kt:90)
+	at org.jetbrains.kotlin.cli.common.CLICompiler.exec(CLICompiler.kt:352)
+	at org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunnerBase.runCompiler(IncrementalJvmCompilerRunnerBase.kt:175)
+	at org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunnerBase.runCompiler(IncrementalJvmCompilerRunnerBase.kt:38)
+	at org.jetbrains.kotlin.incremental.IncrementalCompilerRunner.doCompile(IncrementalCompilerRunner.kt:504)
+	at org.jetbrains.kotlin.incremental.IncrementalCompilerRunner.compileImpl(IncrementalCompilerRunner.kt:421)
+	at org.jetbrains.kotlin.incremental.IncrementalCompilerRunner.tryCompileIncrementally$lambda$10$compile(IncrementalCompilerRunner.kt:254)
+	at org.jetbrains.kotlin.incremental.IncrementalCompilerRunner.tryCompileIncrementally(IncrementalCompilerRunner.kt:272)
+	at org.jetbrains.kotlin.incremental.IncrementalCompilerRunner.compile(IncrementalCompilerRunner.kt:124)
+	at org.jetbrains.kotlin.daemon.CompileServiceImplBase.execIncrementalCompiler(CompileServiceImpl.kt:679)
+	at org.jetbrains.kotlin.daemon.CompileServiceImplBase.access$execIncrementalCompiler(CompileServiceImpl.kt:93)
+	at org.jetbrains.kotlin.daemon.CompileServiceImpl.compile(CompileServiceImpl.kt:1806)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(Unknown Source)
+	at java.base/java.lang.reflect.Method.invoke(Unknown Source)
+	at java.rmi/sun.rmi.server.UnicastServerRef.dispatch(Unknown Source)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Unknown Source)
+	at java.rmi/sun.rmi.transport.Transport$1.run(Unknown Source)
+	at java.base/java.security.AccessController.doPrivileged(Unknown Source)
+	at java.rmi/sun.rmi.transport.Transport.serviceCall(Unknown Source)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport.handleMessages(Unknown Source)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run0(Unknown Source)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.lambda$run$0(Unknown Source)
+	at java.base/java.security.AccessController.doPrivileged(Unknown Source)
+	at java.rmi/sun.rmi.transport.tcp.TCPTransport$ConnectionHandler.run(Unknown Source)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+	at java.base/java.lang.Thread.run(Unknown Source)
+Caused by: org.jetbrains.kotlin.codegen.CompilationException: Back-end (JVM) Internal error: Couldn't inline method call: CALL 'public final fun <get-current> (): T of androidx.compose.runtime.CompositionLocal [inline] declared in androidx.compose.runtime.CompositionLocal' type=android.content.Context origin=GET_PROPERTY
+Method: null
+File is unknown
+The root cause java.lang.IllegalStateException was thrown at: org.jetbrains.kotlin.codegen.inline.SourceCompilerForInlineKt.getMethodNode(SourceCompilerForInline.kt:129)
+	at org.jetbrains.kotlin.backend.jvm.codegen.IrInlineCodegen.genInlineCall(IrInlineCodegen.kt:82)
+	at org.jetbrains.kotlin.backend.jvm.codegen.IrInlineCallGenerator.genCall(IrInlineCallGenerator.kt:36)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitCall(ExpressionCodegen.kt:586)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitCall(ExpressionCodegen.kt:135)
+	at org.jetbrains.kotlin.ir.expressions.IrCall.accept(IrCall.kt:24)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitVariable(ExpressionCodegen.kt:725)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitVariable(ExpressionCodegen.kt:135)
+	at org.jetbrains.kotlin.ir.declarations.IrVariable.accept(IrVariable.kt:36)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitStatementContainer(ExpressionCodegen.kt:527)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitBlockBody(ExpressionCodegen.kt:532)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.visitBlockBody(ExpressionCodegen.kt:135)
+	at org.jetbrains.kotlin.ir.expressions.IrBlockBody.accept(IrBlockBody.kt:20)
+	at org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen.generate(ExpressionCodegen.kt:233)
+	at org.jetbrains.kotlin.backend.jvm.codegen.FunctionCodegen.doGenerate(FunctionCodegen.kt:126)
+	at org.jetbrains.kotlin.backend.jvm.codegen.FunctionCodegen.generate(FunctionCodegen.kt:47)
+	... 46 more
+Caused by: java.lang.IllegalStateException: couldn't find inline method Landroidx/compose/runtime/CompositionLocal;.getCurrent()Ljava/lang/Object;
+	at org.jetbrains.kotlin.codegen.inline.SourceCompilerForInlineKt.getMethodNode(SourceCompilerForInline.kt:129)
+	at org.jetbrains.kotlin.codegen.inline.SourceCompilerForInlineKt.loadCompiledInlineFunction$lambda$2(SourceCompilerForInline.kt:98)
+	at org.jetbrains.kotlin.codegen.inline.InlineCache.computeMethodBytes(InlineCache.kt:90)
+	at org.jetbrains.kotlin.codegen.inline.SourceCompilerForInlineKt.loadCompiledInlineFunction(SourceCompilerForInline.kt:93)
+	at org.jetbrains.kotlin.backend.jvm.codegen.IrSourceCompilerForInline.compileInlineFunction(IrSourceCompilerForInline.kt:96)
+	at org.jetbrains.kotlin.backend.jvm.codegen.IrInlineCodegen.genInlineCall(IrInlineCodegen.kt:65)
+	... 60 more
+
+

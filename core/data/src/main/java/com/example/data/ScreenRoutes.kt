@@ -1,9 +1,5 @@
 package com.example.data
 
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
-
-
 enum class ScreenRoutes(
     val route: String,
     val label: String,
