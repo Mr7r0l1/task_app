@@ -1,5 +1,7 @@
 package com.example.navigation
 
+import android.app.Activity
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.foundation.layout.Row
@@ -15,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -34,20 +37,27 @@ fun NavHostApp(
     onChangeTheme: (Boolean) -> Unit,
     startDestination: ScreenRoutes = ScreenRoutes.HOME
 ) {
+    val context = LocalContext.current
 
-    fun ChangeTheme(value: Boolean){
-        onChangeTheme(value)
+    var currentRoute by rememberSaveable { mutableStateOf(startDestination) }
+
+    BackHandler(enabled = currentRoute != ScreenRoutes.HOME){
+        if (currentRoute == ScreenRoutes.HOME) {
+            (context as? Activity)?.finish()
+        } else {
+            navController.popBackStack(ScreenRoutes.HOME.route, false)
+        }
     }
 
-    var selectedDestination by rememberSaveable { mutableStateOf(startDestination) }
     Scaffold(bottomBar = {
         NavigationBar {
             ScreenRoutes.entries.forEachIndexed { index, routes ->
                 NavigationBarItem(
-                    selected = selectedDestination == routes,
+                    selected = currentRoute == routes,
                     onClick = {
-                        if(routes != selectedDestination)
-                        navController.navigate(routes.route)
+                        if (routes != currentRoute) {
+                            navController.navigate(routes.route)
+                        }
                     },
                     icon = { Icon(painter = painterResource(routes.iconId), "HomeIcon") },
                     label = { Text(routes.label) })
@@ -55,7 +65,7 @@ fun NavHostApp(
         }
     }, topBar = {
         AnimatedContent(
-            targetState = selectedDestination, label = "TopBar Animation"
+            targetState = currentRoute, label = "TopBar Animation"
         ) { targetRoute ->
             when (targetRoute) {
                 ScreenRoutes.HOME -> {
@@ -65,23 +75,22 @@ fun NavHostApp(
                                 Text("Inicio")
                             }
 
-                        }
-                    )
+                        })
                 }
+
                 ScreenRoutes.NEW_TASK -> {
                     TopAppBar(
-                        title = { Text("Agregar tarea") }
-                    )
+                        title = { Text("Agregar tarea") })
                 }
+
                 ScreenRoutes.SETTINGS -> {
                     TopAppBar(
-                        title = { Text("Ajustes") }
-                    )
+                        title = { Text("Ajustes") })
                 }
+
                 ScreenRoutes.TASKS -> {
                     TopAppBar(
-                        title = { Text("Tareas") }
-                    )
+                        title = { Text("Tareas") })
                 }
             }
         }
@@ -94,32 +103,33 @@ fun NavHostApp(
                 enterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left) },
                 exitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left) },
             ) {
-                selectedDestination = ScreenRoutes.HOME
-                HomeScreen(prefs,innerPadding)
+                currentRoute = ScreenRoutes.HOME
+                HomeScreen(prefs, innerPadding)
             }
             composable(
                 ScreenRoutes.NEW_TASK.route,
                 enterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left) },
                 exitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left) },
             ) {
-                selectedDestination = ScreenRoutes.NEW_TASK
-                NewTaskScreen(prefs, navController,innerPadding,)
+                currentRoute = ScreenRoutes.NEW_TASK
+                NewTaskScreen(prefs, navController, innerPadding)
             }
             composable(
                 ScreenRoutes.SETTINGS.route,
                 enterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left) },
                 exitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left) },
             ) {
-                selectedDestination = ScreenRoutes.SETTINGS
-                SettingsScreen(prefs,innerPadding, onChangeTheme = { theme -> onChangeTheme(theme)})
+                currentRoute = ScreenRoutes.SETTINGS
+                SettingsScreen(
+                    prefs, innerPadding, onChangeTheme = { theme -> onChangeTheme(theme) })
             }
             composable(
                 ScreenRoutes.TASKS.route,
                 enterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left) },
                 exitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left) },
             ) {
-                selectedDestination = ScreenRoutes.TASKS
-                TasksScreen(prefs,innerPadding)
+                currentRoute = ScreenRoutes.TASKS
+                TasksScreen(prefs, innerPadding)
             }
         }
     }
