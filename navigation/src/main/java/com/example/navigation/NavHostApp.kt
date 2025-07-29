@@ -2,18 +2,9 @@ package com.example.navigation
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Row
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -21,7 +12,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -38,8 +28,10 @@ import com.example.utils.PreferencesManager
 @Composable
 fun NavHostApp(
     navController: NavHostController,
+    prefs: PreferencesManager,
     startDestination: ScreenRoutes = ScreenRoutes.HOME
 ) {
+
     var selectedDestination by rememberSaveable { mutableStateOf(startDestination) }
     Scaffold(bottomBar = {
         NavigationBar {
@@ -86,7 +78,7 @@ fun NavHostApp(
                 exitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left) },
             ) {
                 selectedDestination = ScreenRoutes.HOME
-                HomeScreen(innerPadding)
+                HomeScreen(prefs,innerPadding)
             }
             composable(
                 ScreenRoutes.NEW_TASK.route,
@@ -94,7 +86,7 @@ fun NavHostApp(
                 exitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left) },
             ) {
                 selectedDestination = ScreenRoutes.NEW_TASK
-                NewTaskScreen(innerPadding)
+                NewTaskScreen(prefs,innerPadding)
             }
         }
     }

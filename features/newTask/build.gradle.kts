@@ -44,11 +44,12 @@ android {
 dependencies {
 
     implementation(project(":core:data"))
-    implementation(project(":core:components"))
+    implementation(project(":core:utils"))
     //UI
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.compose.material3.material3)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)

@@ -36,7 +36,6 @@ android {
 }
 
 dependencies {
-
     implementation(project(":core:utils"))
 
     // COMPOSE

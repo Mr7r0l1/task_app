@@ -6,8 +6,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.navigation.compose.rememberNavController
 import com.example.data.ScreenRoutes
-import com.example.utils.PreferencesManager
 import com.example.navigation.NavHostApp
+import com.example.utils.PreferencesManager
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -20,6 +20,7 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             NavHostApp(
                 navController = navController,
+                preferencesManager,
                 ScreenRoutes.HOME
             )
         }
