@@ -1,16 +1,14 @@
-package com.example.home
+package com.example.tasks
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -20,12 +18,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.components.AnimatedTaskCard
 import com.example.data.TaskHolder
-import com.example.data.TaskStates
 import com.example.data.getTasks
 import com.example.data.removeTask
 import com.example.utils.PreferencesManager
@@ -36,7 +31,7 @@ import kotlin.uuid.ExperimentalUuidApi
 
 @OptIn(ExperimentalUuidApi::class)
 @Composable
-fun HomeScreen(
+fun TasksScreen(
     prefs: PreferencesManager, padding: PaddingValues
 ) {
     var tasks by remember { mutableStateOf(TaskHolder(emptyList())) }
@@ -44,7 +39,7 @@ fun HomeScreen(
     val scope = rememberCoroutineScope()
 
     fun updateTasks(){
-        tasks = getTasks(prefs, listOf(TaskStates.PENDING, TaskStates.IN_PROGRESS))
+        tasks = getTasks(prefs)
     }
 
     updateTasks()
@@ -58,13 +53,7 @@ fun HomeScreen(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
             modifier = Modifier.padding(10.dp), elevation = CardDefaults.cardElevation(5.dp)
         ) {
-            Column(modifier = Modifier.padding(top = 10.dp)) {
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = "Tareas pendientes",
-                    fontSize = 24.sp,
-                    textAlign = TextAlign.Center
-                )
+            Column(Modifier.padding(top = 10.dp)){
 
                 val erasedTaskIds = remember { mutableStateListOf<String>() } // use Int or UUID based on your id type
 

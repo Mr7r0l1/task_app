@@ -23,6 +23,7 @@ import com.example.data.ScreenRoutes
 import com.example.home.HomeScreen
 import com.example.newtask.NewTaskScreen
 import com.example.settings.SettingsScreen
+import com.example.tasks.TasksScreen
 import com.example.utils.PreferencesManager
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,7 +31,7 @@ import com.example.utils.PreferencesManager
 fun NavHostApp(
     navController: NavHostController,
     prefs: PreferencesManager,
-    onChangeTheme: (state:Boolean) -> Unit,
+    onChangeTheme: (Boolean) -> Unit,
     startDestination: ScreenRoutes = ScreenRoutes.HOME
 ) {
 
@@ -77,6 +78,11 @@ fun NavHostApp(
                         title = { Text("Ajustes") }
                     )
                 }
+                ScreenRoutes.TASKS -> {
+                    TopAppBar(
+                        title = { Text("Tareas") }
+                    )
+                }
             }
         }
     }) { innerPadding ->
@@ -97,7 +103,7 @@ fun NavHostApp(
                 exitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left) },
             ) {
                 selectedDestination = ScreenRoutes.NEW_TASK
-                NewTaskScreen(prefs,innerPadding)
+                NewTaskScreen(prefs, navController,innerPadding,)
             }
             composable(
                 ScreenRoutes.SETTINGS.route,
@@ -106,6 +112,14 @@ fun NavHostApp(
             ) {
                 selectedDestination = ScreenRoutes.SETTINGS
                 SettingsScreen(prefs,innerPadding, onChangeTheme = { theme -> onChangeTheme(theme)})
+            }
+            composable(
+                ScreenRoutes.TASKS.route,
+                enterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left) },
+                exitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left) },
+            ) {
+                selectedDestination = ScreenRoutes.TASKS
+                TasksScreen(prefs,innerPadding)
             }
         }
     }

@@ -50,13 +50,14 @@ dependencies {
     implementation(project(":features:home"))
     implementation(project(":features:newTask"))
     implementation(project(":features:settings"))
+    implementation(project(":features:tasks"))
 
     implementation(project(":core:utils"))
     implementation(project(":core:data"))
     //UI
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
+    implementation(libs.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)

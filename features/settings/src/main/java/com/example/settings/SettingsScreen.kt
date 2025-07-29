@@ -27,7 +27,7 @@ import com.example.utils.PreferencesManager
 fun SettingsScreen(
     prefs : PreferencesManager,
     padding: PaddingValues,
-    onChangeTheme: (state:Boolean) -> Unit
+    onChangeTheme: (Boolean) -> Unit
 ) {
     var isToggled by rememberSaveable { mutableStateOf(prefs.GetTheme()) }
 
@@ -51,6 +51,7 @@ fun SettingsScreen(
                     checked = isToggled,
                     onCheckedChange = {
                         newState -> isToggled = newState
+                        onChangeTheme(newState)
                         prefs.SaveTheme(isToggled)
                     }
                 )

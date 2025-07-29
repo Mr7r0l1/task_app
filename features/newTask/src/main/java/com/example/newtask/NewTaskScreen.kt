@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,9 +28,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.data.AddNewTask
+import androidx.navigation.NavController
+import com.example.data.ScreenRoutes
 import com.example.data.TaskInfo
 import com.example.data.TaskStates
+import com.example.data.addNewTask
+import com.example.design.DynamicText
 import com.example.utils.PreferencesManager
 
 
@@ -37,11 +41,12 @@ import com.example.utils.PreferencesManager
 @Composable
 fun NewTaskScreen(
     prefs : PreferencesManager,
+    navController: NavController,
     padding: PaddingValues
 ) {
 
     fun addTask(title: String,message:String,status: TaskStates){
-        AddNewTask(prefs, TaskInfo(title,message,status))
+        addNewTask(prefs, TaskInfo(title,message,status))
     }
 
 
@@ -89,13 +94,17 @@ fun NewTaskScreen(
 
                         Box(modifier = Modifier) {
                             Button(
+                                colors = ButtonDefaults.buttonColors(containerColor = selectedState.displayColor),
                                 modifier = Modifier, onClick = { expanded = !expanded }) {
                                 Row(
                                     modifier = Modifier,
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Text(selectedState.GetDisplayName())
+                                    DynamicText(
+                                        backgroundColor = selectedState.displayColor,
+                                        text = selectedState.GetDisplayName()
+                                    )
                                     Icon(Icons.Rounded.KeyboardArrowDown, "Descripcion")
                                 }
                             }
@@ -115,7 +124,12 @@ fun NewTaskScreen(
                         }
 
                         Button(
-                            onClick = { addTask(title, message, selectedState) }) {
+                            onClick = {
+                                addTask(title, message, selectedState)
+                                navController.navigate(ScreenRoutes.HOME.route){
+                                    popUpTo(ScreenRoutes.NEW_TASK.route)
+                                }
+                            }) {
                             Text("Agregar")
                         }
                     }

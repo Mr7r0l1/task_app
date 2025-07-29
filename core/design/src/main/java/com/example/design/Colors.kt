@@ -12,8 +12,8 @@ val Pink40 = Color(0xFF7D5260)
 
 val PendingColor = Color(0XFF8F8F8F)
 
-val InProgressColor = Color(0XFFE95CED)
+val InProgressColor = Color(0xFF80CCFF)
 
-val DoneColor = Color(0XFFFF2B2B)
+val DoneColor = Color(0XFFCEF0C0)
 
-val BlockedColor = Color(0XFF8F8F8F)
+val BlockedColor = Color(0XFFFF0000)

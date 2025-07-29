@@ -8,6 +8,8 @@ import com.example.design.PendingColor
 import com.example.utils.PreferencesManager
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 enum class TaskStates(val displayName: String, val displayColor: Color){
     PENDING(displayName = "Pendiente", displayColor = PendingColor),
@@ -29,33 +31,68 @@ enum class TaskStates(val displayName: String, val displayColor: Color){
 }
 
 @Serializable
-data class TaskInfo(
+data class TaskInfo @OptIn(ExperimentalUuidApi::class) constructor(
     val taskTitle: String,
     val taskMessage: String,
-    val taskStatus: TaskStates
+    val taskStatus: TaskStates,
+    val taskId: String = Uuid.random().toString()
 )
 @Serializable
 data class TaskHolder(
     val list: List<TaskInfo>
 
 )
-fun AddNewTask(prefsManager: PreferencesManager,taskToAdd: TaskInfo){
+fun addNewTask(prefsManager: PreferencesManager, taskToAdd: TaskInfo){
 
-    var currentTasks = GetTasks(prefsManager).list
-        //Json.decodeFromString<TaskHolder>(prefsManager.GetTaskData())
+    val currentTasks = getTasks(prefsManager).list.toMutableList()
 
-    val newTasks = currentTasks.plus(taskToAdd)
+    currentTasks.add(taskToAdd)
 
-    val serializedTasks = Json.encodeToString(TaskHolder(newTasks))
+    saveTasks(prefsManager,currentTasks)
+}
+
+fun saveTasks(prefsManager: PreferencesManager, tasks: List<TaskInfo>){
+
+    val serializedTasks = Json.encodeToString(TaskHolder(tasks))
 
     prefsManager.SaveTaskData(serializedTasks)
 }
 
-fun GetTasks(prefsManager: PreferencesManager): TaskHolder{
+fun getTasks(prefsManager: PreferencesManager): TaskHolder{
     try {
         return Json.decodeFromString<TaskHolder>(prefsManager.GetTaskData())
     } catch (error: Exception){
         println("Error while decoding string $error")
         return TaskHolder(emptyList())
     }
+}
+
+fun getTasks(prefsManager: PreferencesManager, filters: List<TaskStates>): TaskHolder{
+    try {
+        val list = Json.decodeFromString<TaskHolder>(prefsManager.GetTaskData())
+
+        val filteredList = TaskHolder( list.list.filter { task -> task.taskStatus in filters })
+
+        return filteredList
+
+    } catch (error: Exception){
+
+        println("Error while decoding string $error")
+
+        return TaskHolder(emptyList())
+    }
+}
+
+fun removeTask(prefsManager: PreferencesManager, task: TaskInfo){
+    val tasks = getTasks(prefsManager).list.toMutableList()
+
+    tasks.remove(task)
+    
+    saveTasks(prefsManager,tasks)
+
+}
+
+fun updateTask(prefsManager: PreferencesManager, oldTask: TaskInfo, newTask: TaskInfo){
+    removeTask(prefsManager,oldTask)
+    addNewTask(prefsManager,newTask)
 }

@@ -20,6 +20,7 @@
             <option value="$PROJECT_DIR$/features/home" />
             <option value="$PROJECT_DIR$/features/newTask" />
             <option value="$PROJECT_DIR$/features/settings" />
+            <option value="$PROJECT_DIR$/features/tasks" />
             <option value="$PROJECT_DIR$/navigation" />
           </set>
         </option>
