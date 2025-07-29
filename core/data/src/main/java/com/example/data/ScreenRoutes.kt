@@ -6,5 +6,6 @@ enum class ScreenRoutes(
     val iconId: Int
 ) {
     HOME("homescreen", "Inicio", R.drawable.outline_home_24),
-    NEW_TASK("new_task", "Agregar tarea", R.drawable.outline_add_circle_24)
+    NEW_TASK("new_task", "Agregar tarea", R.drawable.outline_add_circle_24),
+    SETTINGS("settings", "Ajustes", R.drawable.outline_settings_24)
 }

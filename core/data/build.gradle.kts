@@ -37,6 +37,7 @@ android {
 
 dependencies {
     implementation(project(":core:utils"))
+    implementation(project(":core:design"))
 
     // COMPOSE
     implementation(libs.compose.ui)

@@ -49,6 +49,7 @@ dependencies {
     //Screens
     implementation(project(":features:home"))
     implementation(project(":features:newTask"))
+    implementation(project(":features:settings"))
 
     implementation(project(":core:utils"))
     implementation(project(":core:data"))

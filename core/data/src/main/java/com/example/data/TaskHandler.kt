@@ -1,6 +1,10 @@
 package com.example.data
 
 import androidx.compose.ui.graphics.Color
+import com.example.design.BlockedColor
+import com.example.design.DoneColor
+import com.example.design.InProgressColor
+import com.example.design.PendingColor
 import com.example.utils.PreferencesManager
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json

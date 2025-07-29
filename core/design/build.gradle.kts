@@ -36,6 +36,11 @@ android {
 
 dependencies {
 
+
+    implementation(libs.compose.ui)
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.graphics)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.navigation.compose.rememberNavController
 import com.example.data.ScreenRoutes
 import com.example.navigation.NavHostApp
+import com.example.task_app.ui.theme.Task_appTheme
 import com.example.utils.PreferencesManager
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -16,13 +17,16 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         val preferencesManager = PreferencesManager(this)
+        var darkTheme = preferencesManager.GetTheme()
         setContent {
-            val navController = rememberNavController()
-            NavHostApp(
-                navController = navController,
-                preferencesManager,
-                ScreenRoutes.HOME
-            )
+            Task_appTheme(darkTheme){
+                val navController = rememberNavController()
+                NavHostApp(
+                    navController = navController,
+                    preferencesManager,
+                    ScreenRoutes.HOME
+                )
+            }
         }
     }
 }

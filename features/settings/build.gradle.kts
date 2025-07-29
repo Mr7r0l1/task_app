@@ -1,28 +1,20 @@
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
-}
-
-
-hilt {
-    enableAggregatingTask = false
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
-    namespace = "com.example.task_app"
+    namespace = "com.example.settings"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.task_app"
         minSdk = 26
-        targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildTypes {
@@ -38,9 +30,6 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    buildFeatures {
-        compose = true
-    }
     kotlin {
         compilerOptions {
             jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
@@ -49,14 +38,15 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:design"))
+
+
     implementation(project(":core:data"))
     implementation(project(":core:utils"))
-    implementation(project(":navigation"))
-
+    //UI
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.compose.material3.material3)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
@@ -70,6 +60,11 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    // COMPOSE
+    implementation(libs.compose.ui)
+    implementation(libs.compose.ui.tooling.preview)
+    implementation(libs.activity.compose)
+    implementation("androidx.compose.material:material-icons-extended")
 
     // NAVIGATION
     implementation(libs.androidx.navigation.compose)
@@ -77,4 +72,7 @@ dependencies {
     // HILT
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
+
+    // HILT NAV
+    implementation(libs.androidx.hilt.navigation.compose)
 }

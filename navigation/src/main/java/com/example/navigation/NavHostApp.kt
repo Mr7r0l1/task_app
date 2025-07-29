@@ -22,6 +22,7 @@ import androidx.navigation.compose.composable
 import com.example.data.ScreenRoutes
 import com.example.home.HomeScreen
 import com.example.newtask.NewTaskScreen
+import com.example.settings.SettingsScreen
 import com.example.utils.PreferencesManager
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -29,8 +30,13 @@ import com.example.utils.PreferencesManager
 fun NavHostApp(
     navController: NavHostController,
     prefs: PreferencesManager,
+    onChangeTheme: (state:Boolean) -> Unit,
     startDestination: ScreenRoutes = ScreenRoutes.HOME
 ) {
+
+    fun ChangeTheme(value: Boolean){
+        onChangeTheme(value)
+    }
 
     var selectedDestination by rememberSaveable { mutableStateOf(startDestination) }
     Scaffold(bottomBar = {
@@ -66,6 +72,11 @@ fun NavHostApp(
                         title = { Text("Agregar tarea") }
                     )
                 }
+                ScreenRoutes.SETTINGS -> {
+                    TopAppBar(
+                        title = { Text("Ajustes") }
+                    )
+                }
             }
         }
     }) { innerPadding ->
@@ -87,6 +98,14 @@ fun NavHostApp(
             ) {
                 selectedDestination = ScreenRoutes.NEW_TASK
                 NewTaskScreen(prefs,innerPadding)
+            }
+            composable(
+                ScreenRoutes.SETTINGS.route,
+                enterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left) },
+                exitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left) },
+            ) {
+                selectedDestination = ScreenRoutes.SETTINGS
+                SettingsScreen(prefs,innerPadding, onChangeTheme = { theme -> onChangeTheme(theme)})
             }
         }
     }

@@ -1,4 +1,4 @@
-package com.example.task_app.ui.theme
+package com.example.design
 
 import androidx.compose.ui.graphics.Color
 
