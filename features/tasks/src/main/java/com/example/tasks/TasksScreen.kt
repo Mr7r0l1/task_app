@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -52,7 +52,7 @@ fun TasksScreen(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
             modifier = Modifier.padding(10.dp), elevation = CardDefaults.cardElevation(5.dp)
         ) {
-            Column(Modifier.padding(top = 10.dp).fillMaxWidth()){
+            Column(Modifier.fillMaxWidth()){
 
                 val erasedTaskIds = remember { mutableStateListOf<String>() } // use Int or UUID based on your id type
 
@@ -60,7 +60,7 @@ fun TasksScreen(
                     LazyColumn(
                         contentPadding = PaddingValues(20.dp)
                     ) {
-                        items(items = tasks.list, key = { it.taskId }) { task ->
+                        itemsIndexed(items = tasks.list, key = { index, item -> item.taskId }) {index, task ->
                             AnimatedTaskCard(
                                 task = task,
                                 onErase = {
@@ -74,6 +74,8 @@ fun TasksScreen(
                                 },
                                 isErased = erasedTaskIds.contains(task.taskId)
                             )
+                            if(index != tasks.list.count() -1)
+                                Spacer(Modifier.height(10.dp))
                         }
                     }
                 } else{
@@ -85,7 +87,6 @@ fun TasksScreen(
                         text = "No hay tareas pendientes",
                         textAlign = TextAlign.Center
                     )
-                    Spacer(Modifier.height(10.dp))
                 }
             }
         }

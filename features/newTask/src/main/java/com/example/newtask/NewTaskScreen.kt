@@ -11,6 +11,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,6 +26,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -31,6 +35,8 @@ import com.example.data.TaskInfo
 import com.example.data.TaskStates
 import com.example.data.addNewTask
 import com.example.design.DynamicText
+import com.example.design.darker
+import com.example.design.isLight
 import com.example.utils.PreferencesManager
 
 
@@ -58,10 +64,13 @@ fun NewTaskScreen(
         Column(
             Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center
         ) {
-            Box(
-                modifier = Modifier.padding(horizontal = 20.dp)
+
+            Card(
+                modifier = Modifier.padding(horizontal = 20.dp),
+                elevation = CardDefaults.cardElevation(10.dp)
             ) {
                 Column(
+                    modifier = Modifier.padding(20.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -73,8 +82,7 @@ fun NewTaskScreen(
                         isError = titleError,
                         singleLine = true,
                         supportingText = {
-                            if(titleError)
-                                Text("Ingrese un titulo")
+                            if (titleError) Text("Ingrese un titulo")
                         },
                         onValueChange = { newVal ->
                             title = newVal
@@ -107,7 +115,15 @@ fun NewTaskScreen(
                                         backgroundColor = selectedState.displayColor,
                                         text = selectedState.GetDisplayName()
                                     )
-                                    Icon(Icons.Rounded.KeyboardArrowDown, "Descripcion")
+
+                                    val iconColor =
+                                        if (selectedState.displayColor.isLight()) Color.Black else Color.White
+
+                                    Icon(
+                                        imageVector = Icons.Rounded.KeyboardArrowDown,
+                                        contentDescription = "Descripcion",
+                                        tint = iconColor
+                                    )
                                 }
                             }
                             DropdownMenu(
@@ -115,12 +131,18 @@ fun NewTaskScreen(
                                 expanded = expanded,
                                 onDismissRequest = { expanded = false }) {
                                 TaskStates.entries.forEach { states ->
-                                    DropdownMenuItem(
-                                        text = { Text(states.GetDisplayName()) },
-                                        onClick = {
-                                            expanded = false
-                                            selectedState = states
-                                        })
+                                    DropdownMenuItem(text = {
+                                        Text(
+                                            text = states.GetDisplayName(), style = TextStyle(
+                                                color = states.displayColor.darker(),
+                                                fontWeight = FontWeight.Bold,
+                                                fontSize = 16.sp
+                                            )
+                                        )
+                                    }, onClick = {
+                                        expanded = false
+                                        selectedState = states
+                                    })
                                 }
                             }
                         }

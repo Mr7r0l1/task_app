@@ -2,6 +2,13 @@ package com.example.navigation
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ContentTransform
+import androidx.compose.animation.core.EaseInOutExpo
+import androidx.compose.animation.core.EaseOutCubic
+import androidx.compose.animation.core.EaseOutExpo
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -52,7 +59,7 @@ fun NavHostApp(
         val homePageIndex = ScreenRoutes.entries.indexOf(ScreenRoutes.HOME)
         if (pagerState.currentPage != homePageIndex) {
             scope.launch { // Use the remembered coroutine scope
-                pagerState.animateScrollToPage(homePageIndex)
+                pagerState.animateScrollToPage(homePageIndex, animationSpec = tween(durationMillis = 1000, easing = EaseInOutExpo))
             }
         }
     }
@@ -64,7 +71,7 @@ fun NavHostApp(
                 NavigationBarItem(selected = currentRoute == routes, onClick = {
                     if (pagerState.currentPage != index) { // Only scroll if not already on this page
                         scope.launch {
-                            pagerState.animateScrollToPage(index) // Directly tell the pager to animate
+                            pagerState.animateScrollToPage(index, animationSpec = tween(durationMillis = 600, easing = EaseOutCubic)) // Directly tell the pager to animate
                         }
                     }
                 }, icon = {
@@ -76,7 +83,13 @@ fun NavHostApp(
         }
     }, topBar = {
         AnimatedContent(
-            targetState = currentRoute, label = "TopBar Animation"
+            targetState = currentRoute, label = "TopBar Animation",
+            transitionSpec = {
+                ContentTransform(
+                    targetContentEnter = expandVertically(animationSpec = tween(durationMillis = 800, easing = EaseOutExpo)),
+                    initialContentExit = shrinkVertically(animationSpec = tween(durationMillis = 800, easing = EaseOutExpo))
+                )
+            }
         ) { targetRoute ->
             when (targetRoute) {
                 ScreenRoutes.HOME -> {
@@ -115,7 +128,7 @@ fun NavHostApp(
                 ScreenRoutes.NEW_TASK -> NewTaskScreen(
                     prefs, Modifier.fillMaxSize(), onAddTask = {
                         scope.launch {
-                            pagerState.animateScrollToPage(0) // Directly tell the pager to animate
+                            pagerState.animateScrollToPage(1)
                         }
                     })
 

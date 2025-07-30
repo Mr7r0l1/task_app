@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -31,6 +30,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -54,34 +55,53 @@ import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 @Composable
-fun TaskCard(
+fun QuickTaskCard(
     taskInfo: TaskInfo,
-    modifier: Modifier = Modifier,
-    innerPadding: PaddingValues = PaddingValues(10.dp)
+    modifier: Modifier = Modifier, innerPadding: PaddingValues = PaddingValues(10.dp)
 ) {
     Card(modifier = modifier, elevation = CardDefaults.cardElevation(4.dp)) {
-        Box() {
-            Column(Modifier.padding(innerPadding)) {
-                Row(
-                    modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+
+        Column(Modifier.padding(innerPadding)) {
+            Row(
+                modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(taskInfo.taskTitle)
+                Box(
+                    modifier = Modifier.background(
+                        taskInfo.taskStatus.displayColor, shape = RoundedCornerShape(25)
+                    )
                 ) {
-                    Text(taskInfo.taskTitle)
-                    Box(
-                        modifier = Modifier.background(
-                            taskInfo.taskStatus.displayColor, shape = RoundedCornerShape(25)
-                        )
-                    ) {
-                        DynamicText(
-                            text = taskInfo.taskStatus.GetDisplayName(),
-                            backgroundColor = taskInfo.taskStatus.displayColor,
-                            padding = 5
-                        )
-                    }
+                    DynamicText(
+                        text = taskInfo.taskStatus.GetDisplayName(),
+                        backgroundColor = taskInfo.taskStatus.displayColor,
+                        padding = 5
+                    )
                 }
             }
+            Card(
+                modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp),
+                border = CardDefaults.outlinedCardBorder(enabled = true)
+            ) {
+                TextField(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    readOnly = true,
+                    maxLines = 3,
+                    colors = TextFieldDefaults.colors(
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent
+                    ),
+                    value = if(!taskInfo.taskMessage.isEmpty()) taskInfo.taskMessage else "Vacio...",
+                    onValueChange = {  }
+                )
+            }
         }
+
     }
 }
 
@@ -111,12 +131,12 @@ fun SwipeableTaskCard(
                 .fillMaxWidth()
                 .offset { IntOffset(globalOffset.value.roundToInt(), 0) }
                 .height(IntrinsicSize.Min)) {
-            Row(
+            Column(
                 modifier = Modifier
                     .matchParentSize()
                     .padding(end = 10.dp),
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.Center
             ) {
                 Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
                     Button(
@@ -220,7 +240,6 @@ fun AnimatedTaskCard(
                 visible = true,
                 modifier = Modifier.fillMaxWidth()
             )
-            Spacer(modifier = Modifier.height(10.dp))
         }
     }
 }

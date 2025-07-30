@@ -38,7 +38,7 @@ class PreferencesManager @Inject constructor(
         }
     }
     fun GetTheme(): Boolean{
-        val taskData = prefs.getBoolean(DARK_THEME, false)
+        val taskData = prefs.getBoolean(DARK_THEME, true)
 
         return taskData
     }

@@ -26,6 +26,19 @@ fun Color.isLight(): Boolean {
     return ColorUtils.calculateLuminance(colorInt) > 0.5
 }
 
+fun Color.darker(): Color{
+
+    val hsl = FloatArray(3)
+    ColorUtils.colorToHSL(android.graphics.Color.argb(
+        (alpha * 255).toInt(),
+        (red * 255).toInt(),
+        (green * 255).toInt(),
+        (blue * 255).toInt()), hsl)
+    hsl[2] = (hsl[2] * 0.8f).coerceIn(0f, 1f) // reduce lightness by 20%
+    val darkerColor = Color(ColorUtils.HSLToColor(hsl))
+    return darkerColor
+}
+
 @Composable
 fun DynamicText(
     backgroundColor: Color,
