@@ -23,6 +23,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.components.QuickTaskCard
 import com.example.data.TaskHolder
+import com.example.data.TaskInfo
 import com.example.data.TaskStates
 import com.example.data.getTasks
 import com.example.utils.PreferencesManager
@@ -32,7 +33,7 @@ import kotlin.uuid.ExperimentalUuidApi
 @OptIn(ExperimentalUuidApi::class)
 @Composable
 fun HomeScreen(
-    prefs: PreferencesManager, modifier: Modifier
+    prefs: PreferencesManager, modifier: Modifier,onTaskView:(TaskInfo) -> Unit
 ) {
     var tasks by remember { mutableStateOf(TaskHolder(emptyList())) }
 
@@ -58,6 +59,7 @@ fun HomeScreen(
                         itemsIndexed(items = tasks.list, key = { index, item -> item.taskId }) {index, task ->
                             QuickTaskCard(
                                 taskInfo = task,
+                                onView = {onTaskView(task)}
                             )
 
                             if(index != tasks.list.count() -1)

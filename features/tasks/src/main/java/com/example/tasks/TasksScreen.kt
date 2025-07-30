@@ -24,6 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.components.AnimatedTaskCard
 import com.example.data.TaskHolder
+import com.example.data.TaskInfo
 import com.example.data.getTasks
 import com.example.data.removeTask
 import com.example.utils.PreferencesManager
@@ -35,7 +36,8 @@ import kotlin.uuid.ExperimentalUuidApi
 @OptIn(ExperimentalUuidApi::class)
 @Composable
 fun TasksScreen(
-    prefs: PreferencesManager, modifier: Modifier
+    prefs: PreferencesManager, modifier: Modifier,
+    onView: (TaskInfo) -> Unit
 ) {
     var tasks by remember { mutableStateOf(TaskHolder(emptyList())) }
 
@@ -72,6 +74,7 @@ fun TasksScreen(
                                         erasedTaskIds.remove(task.taskId)
                                     }
                                 },
+                                onView = {onView(task)},
                                 isErased = erasedTaskIds.contains(task.taskId)
                             )
                             if(index != tasks.list.count() -1)
@@ -84,7 +87,7 @@ fun TasksScreen(
                             .fillMaxWidth()
                             .padding(20.dp)
                         ,
-                        text = "No hay tareas pendientes",
+                        text = "No hay tareas creadas",
                         textAlign = TextAlign.Center
                     )
                 }

@@ -33,12 +33,14 @@ import com.example.settings.SettingsScreen
 import com.example.tasks.TasksScreen
 import com.example.utils.PreferencesManager
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NavHostApp(
+fun PagerApp(
     prefs: PreferencesManager,
     onChangeTheme: (Boolean) -> Unit,
+    onViewTask: (String) -> Unit = {},
     startDestination: ScreenRoutes = ScreenRoutes.HOME
 ) {
 
@@ -58,8 +60,11 @@ fun NavHostApp(
     BackHandler(enabled = currentRoute != ScreenRoutes.HOME) {
         val homePageIndex = ScreenRoutes.entries.indexOf(ScreenRoutes.HOME)
         if (pagerState.currentPage != homePageIndex) {
-            scope.launch { // Use the remembered coroutine scope
-                pagerState.animateScrollToPage(homePageIndex, animationSpec = tween(durationMillis = 1000, easing = EaseInOutExpo))
+            scope.launch {
+                pagerState.animateScrollToPage(
+                    homePageIndex,
+                    animationSpec = tween(durationMillis = 1000, easing = EaseInOutExpo)
+                )
             }
         }
     }
@@ -69,9 +74,12 @@ fun NavHostApp(
         NavigationBar {
             ScreenRoutes.entries.forEachIndexed { index, routes ->
                 NavigationBarItem(selected = currentRoute == routes, onClick = {
-                    if (pagerState.currentPage != index) { // Only scroll if not already on this page
+                    if (pagerState.currentPage != index) {
                         scope.launch {
-                            pagerState.animateScrollToPage(index, animationSpec = tween(durationMillis = 600, easing = EaseOutCubic)) // Directly tell the pager to animate
+                            pagerState.animateScrollToPage(
+                                index,
+                                animationSpec = tween(durationMillis = 600, easing = EaseOutCubic)
+                            ) // Directly tell the pager to animate
                         }
                     }
                 }, icon = {
@@ -83,14 +91,19 @@ fun NavHostApp(
         }
     }, topBar = {
         AnimatedContent(
-            targetState = currentRoute, label = "TopBar Animation",
-            transitionSpec = {
+            targetState = currentRoute, label = "TopBar Animation", transitionSpec = {
                 ContentTransform(
-                    targetContentEnter = expandVertically(animationSpec = tween(durationMillis = 800, easing = EaseOutExpo)),
-                    initialContentExit = shrinkVertically(animationSpec = tween(durationMillis = 800, easing = EaseOutExpo))
+                    targetContentEnter = expandVertically(
+                        animationSpec = tween(
+                            durationMillis = 800, easing = EaseOutExpo
+                        )
+                    ), initialContentExit = shrinkVertically(
+                        animationSpec = tween(
+                            durationMillis = 800, easing = EaseOutExpo
+                        )
+                    )
                 )
-            }
-        ) { targetRoute ->
+            }) { targetRoute ->
             when (targetRoute) {
                 ScreenRoutes.HOME -> {
                     TopAppBar(
@@ -121,9 +134,11 @@ fun NavHostApp(
         HorizontalPager(
             state = pagerState, modifier = Modifier.padding(innerPadding)
         ) { page ->
-            // Render the screen corresponding to the current page index
             when (ScreenRoutes.entries[page]) {
-                ScreenRoutes.HOME -> HomeScreen(prefs, Modifier.fillMaxSize())
+                ScreenRoutes.HOME -> HomeScreen(
+                    prefs, Modifier.fillMaxSize(), onTaskView = { task ->
+                        onViewTask(Json.encodeToString(task))
+                    })
 
                 ScreenRoutes.NEW_TASK -> NewTaskScreen(
                     prefs, Modifier.fillMaxSize(), onAddTask = {
@@ -132,13 +147,15 @@ fun NavHostApp(
                         }
                     })
 
-                ScreenRoutes.TASKS -> TasksScreen(prefs, Modifier.fillMaxSize())
+                ScreenRoutes.TASKS -> TasksScreen(
+                    prefs, Modifier.fillMaxSize(), onView = { task ->
+                        onViewTask(Json.encodeToString(task))
+                    })
 
                 ScreenRoutes.SETTINGS -> SettingsScreen(
                     prefs,
                     Modifier.fillMaxSize(),
-                    onChangeTheme = { theme -> onChangeTheme(theme) }
-                )
+                    onChangeTheme = { theme -> onChangeTheme(theme) })
 
             }
         }
