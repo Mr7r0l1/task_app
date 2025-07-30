@@ -59,7 +59,9 @@ fun QuickTaskCard(
     taskInfo: TaskInfo,
     modifier: Modifier = Modifier, innerPadding: PaddingValues = PaddingValues(10.dp)
 ) {
-    Card(modifier = modifier, elevation = CardDefaults.cardElevation(4.dp)) {
+    var visible by remember { mutableStateOf(false) }
+
+    Card(modifier = modifier, elevation = CardDefaults.cardElevation(4.dp), onClick = {visible = !visible}) {
 
         Column(Modifier.padding(innerPadding)) {
             Row(
@@ -80,25 +82,31 @@ fun QuickTaskCard(
                     )
                 }
             }
-            Card(
-                modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp),
-                border = CardDefaults.outlinedCardBorder(enabled = true)
+            AnimatedVisibility(
+                visible = visible,
+                enter = expandVertically() + fadeIn(),
+                exit = shrinkVertically() + fadeOut(),
             ) {
-                TextField(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    readOnly = true,
-                    maxLines = 3,
-                    colors = TextFieldDefaults.colors(
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent
-                    ),
-                    value = if(!taskInfo.taskMessage.isEmpty()) taskInfo.taskMessage else "Vacio...",
-                    onValueChange = {  }
-                )
+                Card(
+                    modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp),
+                    border = CardDefaults.outlinedCardBorder(enabled = true)
+                ) {
+                    TextField(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        readOnly = true,
+                        maxLines = 3,
+                        colors = TextFieldDefaults.colors(
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            disabledIndicatorColor = Color.Transparent
+                        ),
+                        value = if (!taskInfo.taskMessage.isEmpty()) taskInfo.taskMessage else "Vacio...",
+                        onValueChange = { }
+                    )
+                }
             }
         }
 
