@@ -30,7 +30,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -40,12 +39,17 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.example.data.TaskInfo
+import com.example.design.DeleteButtonColor
 import com.example.design.DynamicText
+import com.example.design.EditButtonColor
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -116,6 +120,7 @@ fun SwipeableTaskCard(
             ) {
                 Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
                     Button(
+                        colors = ButtonDefaults.buttonColors(containerColor = EditButtonColor),
                         onClick = { /* Handle edit */ },
                     ) {
                         Icon(
@@ -132,7 +137,7 @@ fun SwipeableTaskCard(
                                 globalOffset.animateTo(targetValue = -with(density) { 1000.dp.toPx() }, animationSpec = tween(300))
                                 onErase()
                             }
-                        }, colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                        }, colors = ButtonDefaults.buttonColors(containerColor = DeleteButtonColor)
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.Delete,
@@ -165,7 +170,20 @@ fun SwipeableTaskCard(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(taskInfo.taskTitle)
+                        Box(modifier = Modifier
+                            .clipToBounds()
+                            .weight(1f)
+                        ){
+                            Text(
+                                modifier = Modifier
+                                    .graphicsLayer {
+                                        translationX = -offsetX.value
+                                    },
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                text = taskInfo.taskTitle
+                            )
+                        }
                         Box(
                             modifier = Modifier.background(
                                 taskInfo.taskStatus.displayColor, shape = RoundedCornerShape(25)

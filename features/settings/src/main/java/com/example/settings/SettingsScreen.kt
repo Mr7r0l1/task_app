@@ -3,7 +3,6 @@ package com.example.settings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,17 +25,14 @@ import com.example.utils.PreferencesManager
 @Composable
 fun SettingsScreen(
     prefs : PreferencesManager,
-    padding: PaddingValues,
+    modifier: Modifier,
     onChangeTheme: (Boolean) -> Unit
 ) {
     var isToggled by rememberSaveable { mutableStateOf(prefs.GetTheme()) }
 
 
 
-    Box(
-        Modifier
-            .fillMaxSize()
-            .padding(padding)
+    Box(modifier
     ) {
         Column(Modifier
             .fillMaxSize()

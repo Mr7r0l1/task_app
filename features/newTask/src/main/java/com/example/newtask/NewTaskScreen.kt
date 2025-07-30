@@ -3,7 +3,6 @@ package com.example.newtask
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,8 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import com.example.data.ScreenRoutes
 import com.example.data.TaskInfo
 import com.example.data.TaskStates
 import com.example.data.addNewTask
@@ -40,34 +37,29 @@ import com.example.utils.PreferencesManager
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewTaskScreen(
-    prefs : PreferencesManager,
-    navController: NavController,
-    padding: PaddingValues
+    prefs: PreferencesManager, modifier: Modifier, onAddTask: () -> Unit
 ) {
 
-    fun addTask(title: String,message:String,status: TaskStates){
-        addNewTask(prefs, TaskInfo(title,message,status))
+    fun addTask(title: String, message: String, status: TaskStates) {
+        addNewTask(prefs, TaskInfo(title, message, status))
     }
 
 
     var title by remember { mutableStateOf("") }
     var message by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
+    var titleError by remember { mutableStateOf(false) }
     var selectedState by remember { mutableStateOf(TaskStates.PENDING) }
 
     Box(
-        Modifier
-            .fillMaxSize()
-            .padding(padding)
+        modifier
     ) {
 
         Column(
-            Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center
+            Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center
         ) {
             Box(
-                modifier = Modifier
-                    .padding(horizontal = 20.dp)
+                modifier = Modifier.padding(horizontal = 20.dp)
             ) {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -78,7 +70,16 @@ fun NewTaskScreen(
                     TextField(
                         modifier = Modifier.fillMaxWidth(),
                         value = title,
-                        onValueChange = { newVal -> title = newVal },
+                        isError = titleError,
+                        singleLine = true,
+                        supportingText = {
+                            if(titleError)
+                                Text("Ingrese un titulo")
+                        },
+                        onValueChange = { newVal ->
+                            title = newVal
+                            titleError = false
+                        },
                         label = { Text("Titulo") })
                     TextField(
                         modifier = Modifier.fillMaxWidth(),
@@ -95,7 +96,8 @@ fun NewTaskScreen(
                         Box(modifier = Modifier) {
                             Button(
                                 colors = ButtonDefaults.buttonColors(containerColor = selectedState.displayColor),
-                                modifier = Modifier, onClick = { expanded = !expanded }) {
+                                modifier = Modifier,
+                                onClick = { expanded = !expanded }) {
                                 Row(
                                     modifier = Modifier,
                                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -123,13 +125,15 @@ fun NewTaskScreen(
                             }
                         }
 
-                        Button(
-                            onClick = {
+                        Button(onClick = {
+                            if (!title.isEmpty()) {
                                 addTask(title, message, selectedState)
-                                navController.navigate(ScreenRoutes.HOME.route){
-                                    popUpTo(ScreenRoutes.NEW_TASK.route)
-                                }
-                            }) {
+                                title = ""
+                                message = ""
+                                titleError = false
+                                onAddTask()
+                            } else titleError = true
+                        }) {
                             Text("Agregar")
                         }
                     }

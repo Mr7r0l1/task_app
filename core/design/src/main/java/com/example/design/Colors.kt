@@ -17,3 +17,6 @@ val InProgressColor = Color(0xFF80CCFF)
 val DoneColor = Color(0XFFCEF0C0)
 
 val BlockedColor = Color(0XFFFF0000)
+
+val EditButtonColor = Color(0xFFAE89FC)
+val DeleteButtonColor = Color(0xFFFF1A4C)
