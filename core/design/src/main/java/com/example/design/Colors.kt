@@ -14,9 +14,9 @@ val PendingColor = Color(0xFFA2A2A2)
 
 val InProgressColor = Color(0xFF80CCFF)
 
-val DoneColor = Color(0xFFB1EA87)
+val DoneColor = Color(0xFFC6F77C)
 
-val BlockedColor = Color(0XFFFF0000)
+val BlockedColor = Color(0xFFFF0000)
 
 val EditButtonColor = Color(0xFFAE89FC)
-val DeleteButtonColor = Color(0xFFFF1A4C)
+val DeleteButtonColor = Color(0xFFFF3B3B)

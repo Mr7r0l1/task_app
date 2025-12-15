@@ -23,10 +23,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.components.AnimatedTaskCard
+import com.example.data.ScreenRoutes
 import com.example.data.TaskHolder
 import com.example.data.TaskInfo
 import com.example.data.getTasks
 import com.example.data.removeTask
+import com.example.utils.AlarmScheduler
 import com.example.utils.PreferencesManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -36,8 +38,8 @@ import kotlin.uuid.ExperimentalUuidApi
 @OptIn(ExperimentalUuidApi::class)
 @Composable
 fun TasksScreen(
-    prefs: PreferencesManager, modifier: Modifier,
-    onView: (TaskInfo) -> Unit
+    prefs: PreferencesManager, scheduler: AlarmScheduler, modifier: Modifier,
+    onView: (TaskInfo, ScreenRoutes) -> Unit
 ) {
     var tasks by remember { mutableStateOf(TaskHolder(emptyList())) }
 
@@ -62,19 +64,19 @@ fun TasksScreen(
                     LazyColumn(
                         contentPadding = PaddingValues(20.dp)
                     ) {
-                        itemsIndexed(items = tasks.list, key = { index, item -> item.taskId }) {index, task ->
+                        itemsIndexed(items = tasks.list.reversed(), key = { index, item -> item.taskId }) {index, task ->
                             AnimatedTaskCard(
                                 task = task,
                                 onErase = {
                                     scope.launch {
                                         erasedTaskIds.add(task.taskId)
                                         delay(300)
-                                        removeTask(prefs, task)
+                                        removeTask(prefs, task,scheduler)
                                         updateTasks()
                                         erasedTaskIds.remove(task.taskId)
                                     }
                                 },
-                                onView = {onView(task)},
+                                onView = {onView(task,ScreenRoutes.TASKS)},
                                 isErased = erasedTaskIds.contains(task.taskId)
                             )
                             if(index != tasks.list.count() -1)

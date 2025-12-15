@@ -1,5 +1,6 @@
 package com.example.home
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -16,12 +17,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.components.QuickTaskCard
+import com.example.data.ScreenRoutes
 import com.example.data.TaskHolder
 import com.example.data.TaskInfo
 import com.example.data.TaskStates
@@ -33,36 +34,40 @@ import kotlin.uuid.ExperimentalUuidApi
 @OptIn(ExperimentalUuidApi::class)
 @Composable
 fun HomeScreen(
-    prefs: PreferencesManager, modifier: Modifier,onTaskView:(TaskInfo) -> Unit
+    prefs: PreferencesManager, modifier: Modifier,onTaskView:(TaskInfo, ScreenRoutes) -> Unit
 ) {
-    var tasks by remember { mutableStateOf(TaskHolder(emptyList())) }
-
-    val scope = rememberCoroutineScope()
+    var pendingTasks by remember { mutableStateOf(TaskHolder(emptyList())) }
+    var finishedTasks by remember { mutableStateOf(TaskHolder(emptyList())) }
+    var blockedTasks by remember { mutableStateOf(TaskHolder(emptyList())) }
 
     fun updateTasks(){
-        tasks = getTasks(prefs, listOf(TaskStates.PENDING, TaskStates.IN_PROGRESS))
+        pendingTasks = getTasks(prefs, listOf(TaskStates.PENDING, TaskStates.IN_PROGRESS))
+        Log.d("ComposeLog", pendingTasks.toString())
+        finishedTasks = getTasks(prefs,listOf(TaskStates.DONE))
+        blockedTasks = getTasks(prefs,listOf(TaskStates.BLOCKED))
     }
 
     updateTasks()
 
-    Column(modifier) {
+    Column(modifier.padding(10.dp)) {
+
+        Text(text = "Pendientes")
         Card(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
-            modifier = Modifier.padding(10.dp), elevation = CardDefaults.cardElevation(5.dp)
+            elevation = CardDefaults.cardElevation(5.dp)
         ) {
             Column(modifier = Modifier.fillMaxWidth()) {
-
-                if(tasks.list.count() >= 1) {
+                if(pendingTasks.list.count() >= 1) {
                     LazyColumn(
                         contentPadding = PaddingValues(20.dp)
                     ) {
-                        itemsIndexed(items = tasks.list, key = { index, item -> item.taskId }) {index, task ->
+                        itemsIndexed(items = pendingTasks.list.reversed(), key = { index, item -> item.taskId }) { index, task ->
                             QuickTaskCard(
                                 taskInfo = task,
-                                onView = {onTaskView(task)}
+                                onView = {onTaskView(task, ScreenRoutes.HOME)}
                             )
 
-                            if(index != tasks.list.count() -1)
+                            if(index != pendingTasks.list.count() -1)
                                 Spacer(Modifier.height(10.dp))
                         }
                     }
@@ -73,6 +78,72 @@ fun HomeScreen(
                             .padding(20.dp)
                         ,
                         text = "No hay tareas pendientes",
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+        }
+        Spacer(Modifier.height(10.dp))
+        Text(text = "Terminadas")
+        Card(
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
+            elevation = CardDefaults.cardElevation(5.dp)
+        ) {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                if(finishedTasks.list.count() >= 1) {
+                    LazyColumn(
+                        contentPadding = PaddingValues(20.dp)
+                    ) {
+                        itemsIndexed(items = finishedTasks.list.reversed(), key = { index, item -> item.taskId }) { index, task ->
+                            QuickTaskCard(
+                                taskInfo = task,
+                                onView = {onTaskView(task, ScreenRoutes.HOME)}
+                            )
+
+                            if(index != finishedTasks.list.count() -1)
+                                Spacer(Modifier.height(10.dp))
+                        }
+                    }
+                } else{
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(20.dp)
+                        ,
+                        text = "No hay tareas terminadas",
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+        }
+        Spacer(Modifier.height(10.dp))
+        Text(text = "Bloqueadas")
+        Card(
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
+            elevation = CardDefaults.cardElevation(5.dp)
+        ) {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                if(blockedTasks.list.count() >= 1) {
+                    LazyColumn(
+                        contentPadding = PaddingValues(20.dp)
+                    ) {
+                        itemsIndexed(items = blockedTasks.list.reversed(), key = { index, item -> item.taskId }) { index, task ->
+                            QuickTaskCard(
+                                taskInfo = task,
+                                onView = {onTaskView(task, ScreenRoutes.HOME)}
+                            )
+
+                            if(index != blockedTasks.list.count() -1)
+                                Spacer(Modifier.height(10.dp))
+                        }
+                    }
+                } else{
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(20.dp)
+                        ,
+                        text = "No hay tareas bloqueadas",
                         textAlign = TextAlign.Center
                     )
                 }

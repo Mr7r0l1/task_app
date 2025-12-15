@@ -31,6 +31,7 @@ import com.example.home.HomeScreen
 import com.example.newtask.NewTaskScreen
 import com.example.settings.SettingsScreen
 import com.example.tasks.TasksScreen
+import com.example.utils.AlarmScheduler
 import com.example.utils.PreferencesManager
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
@@ -39,8 +40,9 @@ import kotlinx.serialization.json.Json
 @Composable
 fun PagerApp(
     prefs: PreferencesManager,
+    scheduler: AlarmScheduler,
     onChangeTheme: (Boolean) -> Unit,
-    onViewTask: (String) -> Unit = {},
+    onViewTask: (String, ScreenRoutes) -> Unit,
     startDestination: ScreenRoutes = ScreenRoutes.HOME
 ) {
 
@@ -63,7 +65,7 @@ fun PagerApp(
             scope.launch {
                 pagerState.animateScrollToPage(
                     homePageIndex,
-                    animationSpec = tween(durationMillis = 1000, easing = EaseInOutExpo)
+                    animationSpec = tween(durationMillis = 600)
                 )
             }
         }
@@ -136,20 +138,20 @@ fun PagerApp(
         ) { page ->
             when (ScreenRoutes.entries[page]) {
                 ScreenRoutes.HOME -> HomeScreen(
-                    prefs, Modifier.fillMaxSize(), onTaskView = { task ->
-                        onViewTask(Json.encodeToString(task))
+                    prefs, Modifier.fillMaxSize(), onTaskView = { task, prevPage ->
+                        onViewTask(Json.encodeToString(task),prevPage)
                     })
 
                 ScreenRoutes.NEW_TASK -> NewTaskScreen(
-                    prefs, Modifier.fillMaxSize(), onAddTask = {
+                    prefs, scheduler, Modifier.fillMaxSize(), onAddTask = {
                         scope.launch {
                             pagerState.animateScrollToPage(1)
                         }
                     })
 
                 ScreenRoutes.TASKS -> TasksScreen(
-                    prefs, Modifier.fillMaxSize(), onView = { task ->
-                        onViewTask(Json.encodeToString(task))
+                    prefs, scheduler,Modifier.fillMaxSize(), onView = { task, prevPage ->
+                        onViewTask(Json.encodeToString(task),prevPage)
                     })
 
                 ScreenRoutes.SETTINGS -> SettingsScreen(

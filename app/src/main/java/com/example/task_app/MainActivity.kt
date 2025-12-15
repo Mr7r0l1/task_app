@@ -16,6 +16,7 @@ import com.example.data.TaskInfo
 import com.example.navigation.PagerApp
 import com.example.task_app.ui.theme.Task_appTheme
 import com.example.taskviewer.TaskViewer
+import com.example.utils.AlarmScheduler
 import com.example.utils.PreferencesManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.json.Json
@@ -26,6 +27,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         val preferencesManager = PreferencesManager(this)
+        val scheduler = AlarmScheduler(this,preferencesManager)
+        var startRoute = 0
         setContent {
             val navController = rememberNavController()
             var darkTheme by remember { mutableStateOf(preferencesManager.GetTheme()) }
@@ -34,21 +37,29 @@ class MainActivity : ComponentActivity() {
                     composable(route = "pager") {
                         PagerApp(
                             prefs = preferencesManager,
+                            scheduler = scheduler,
                             onChangeTheme = { state -> darkTheme = state },
-                            onViewTask = { task -> navController.navigate("task_viewer/$task") },
-                            startDestination = ScreenRoutes.HOME,
+                            onViewTask = { task, prevPage -> navController.navigate("task_viewer/${prevPage.ordinal}/$task") },
+                            startDestination = ScreenRoutes.entries[startRoute],
                         )
                     }
-                    composable(route = "task_viewer/{task}") { backstackEntry ->
-                        val rawInfo = backstackEntry.arguments?.getString("task")
-                        if (rawInfo != null){
-                            val task = Json.decodeFromString<TaskInfo>(rawInfo)
+                    composable(route = "task_viewer/{prevPage}/{task}") { backstackEntry ->
+                        val rawTaskInfo = backstackEntry.arguments?.getString("task")
+                        val rawPrevPageInfo = backstackEntry.arguments?.getString("prevPage")
+                        if (rawTaskInfo != null){
+                            val task = Json.decodeFromString<TaskInfo>(rawTaskInfo)
+                            val prevPage = rawPrevPageInfo?.toIntOrNull()
+                            if(prevPage != null){
+                                startRoute = prevPage
+                            }
                             TaskViewer(
                                 taskInfo = task,
                                 prefsManager = preferencesManager,
                                 onClose = {
                                     navController.navigate("pager"){
-                                        popUpTo("task_viewer/{task}")
+                                        popUpTo("task_viewer/{prevPage}/{task}"){
+                                            inclusive = true
+                                        }
                                     }
                                 }
                             )

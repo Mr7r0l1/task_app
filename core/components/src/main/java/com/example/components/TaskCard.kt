@@ -93,17 +93,12 @@ fun QuickTaskCard(
                     .padding(top = 10.dp),
                 border = CardDefaults.outlinedCardBorder(enabled = true)
             ) {
-                TextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    readOnly = true,
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp),
                     maxLines = 3,
-                    colors = TextFieldDefaults.colors(
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent
-                    ),
-                    value = if (!taskInfo.taskMessage.isEmpty()) taskInfo.taskMessage else "Vacio...",
-                    onValueChange = { })
+                    text = if (!taskInfo.taskMessage.isEmpty()) taskInfo.taskMessage else "Vacio...")
             }
 
         }
@@ -220,19 +215,17 @@ fun SwipeableTaskCard(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 10.dp),
+                        onClick = {onView()},
                         border = CardDefaults.outlinedCardBorder(enabled = true)
                     ) {
-                        TextField(
-                            modifier = Modifier.fillMaxWidth(),
-                            readOnly = true,
+
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(10.dp),
+
                             maxLines = 3,
-                            colors = TextFieldDefaults.colors(
-                                focusedIndicatorColor = Color.Transparent,
-                                unfocusedIndicatorColor = Color.Transparent,
-                                disabledIndicatorColor = Color.Transparent
-                            ),
-                            value = if (!taskInfo.taskMessage.isEmpty()) taskInfo.taskMessage else "Vacio...",
-                            onValueChange = { })
+                            text = if (!taskInfo.taskMessage.isEmpty()) taskInfo.taskMessage else "Vacio...")
                     }
                 }
             }
