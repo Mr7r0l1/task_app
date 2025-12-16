@@ -46,6 +46,7 @@ dependencies {
     implementation(project(":core:data"))
     implementation(project(":core:utils"))
     implementation(project(":core:components"))
+    implementation(project(":core:model"))
     //UI
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

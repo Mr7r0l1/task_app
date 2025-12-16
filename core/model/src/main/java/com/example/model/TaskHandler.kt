@@ -1,11 +1,10 @@
-package com.example.data
+package com.example.model
 
 import androidx.compose.ui.graphics.Color
 import com.example.design.BlockedColor
 import com.example.design.DoneColor
 import com.example.design.InProgressColor
 import com.example.design.PendingColor
-import com.example.utils.AlarmScheduler
 import com.example.utils.PreferencesManager
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -33,12 +32,12 @@ enum class TaskStates(val displayName: String, val displayColor: Color){
 
 @Serializable
 data class TaskInfo @OptIn(ExperimentalUuidApi::class) constructor(
-    val taskTitle: String,
-    val taskMessage: String,
-    val taskStatus: TaskStates,
-    val taskId: String = Uuid.random().toString(),
-    val reminderTimeMillis: Long? = null,
-    val reminderDays: List<Int> = listOf<Int>(0,0,0,0,0,0,0)
+    var taskTitle: String,
+    var taskMessage: String,
+    var taskStatus: TaskStates,
+    var taskId: String = Uuid.random().toString(),
+    var reminderTimeMillis: Long? = null,
+    var reminderDays: List<Int> = listOf<Int>(0,0,0,0,0,0,0)
 )
 @Serializable
 data class TaskHolder(
@@ -52,7 +51,7 @@ fun addNewTask(prefsManager: PreferencesManager, taskToAdd: TaskInfo, scheduler:
     currentTasks.add(taskToAdd)
 
     saveTasks(prefsManager,currentTasks)
-    if (taskToAdd.reminderTimeMillis != null && taskToAdd.reminderDays.any { it == 1 }) {
+    if (taskToAdd.reminderTimeMillis != null) {
         scheduler.scheduleReminder(taskToAdd)
     }
 }
@@ -61,21 +60,23 @@ fun saveTasks(prefsManager: PreferencesManager, tasks: List<TaskInfo>){
 
     val serializedTasks = Json.encodeToString(TaskHolder(tasks))
 
-    prefsManager.SaveTaskData(serializedTasks)
+    prefsManager.saveTaskData(serializedTasks)
 }
 
 fun getTasks(prefsManager: PreferencesManager): TaskHolder{
     try {
-        return Json.decodeFromString<TaskHolder>(prefsManager.GetTaskData())
+        return Json.decodeFromString<TaskHolder>(prefsManager.getTaskData())
     } catch (error: Exception){
         println("Error while decoding string $error")
         return TaskHolder(emptyList())
     }
 }
-
+fun getTaskById(prefsManager: PreferencesManager, taskId: String): TaskInfo? {
+    return getTasks(prefsManager).list.find { task -> task.taskId == taskId }
+}
 fun getTasks(prefsManager: PreferencesManager, filters: List<TaskStates>): TaskHolder{
     try {
-        val list = Json.decodeFromString<TaskHolder>(prefsManager.GetTaskData())
+        val list = Json.decodeFromString<TaskHolder>(prefsManager.getTaskData())
 
         val filteredList = TaskHolder( list.list.filter { task -> task.taskStatus in filters })
 
@@ -89,20 +90,26 @@ fun getTasks(prefsManager: PreferencesManager, filters: List<TaskStates>): TaskH
     }
 }
 
-fun removeTask(prefsManager: PreferencesManager, task: TaskInfo, scheduler: AlarmScheduler){
+fun removeTask(prefsManager: PreferencesManager, taskId: String, scheduler: AlarmScheduler) {
+    // 1. Get the mutable list of tasks
     val tasks = getTasks(prefsManager).list.toMutableList()
 
-    tasks.remove(task)
+    // 2. Find the taskToRemove BEFORE removing it (we need its reminder details)
+    val taskToRemove = tasks.find { (_, _, _, taskID, _, _) -> taskID == taskId }
 
-    saveTasks(prefsManager,tasks)
+    // 3. Use removeIf to remove the task (if found)
+    tasks.removeIf { (_, _, _, taskID, _, _) -> taskID == taskId }
 
-    // NEW: Cancel the reminder
-    if (task.reminderTimeMillis != null) {
-        scheduler.cancelReminder(task)
+    // 4. Save the updated list
+    saveTasks(prefsManager, tasks)
+
+    // 5. Cancel the reminder (if needed)
+    if (taskToRemove?.reminderTimeMillis != null) {
+        scheduler.cancelReminder(task = taskToRemove)
     }
 }
 
-fun updateTask(prefsManager: PreferencesManager, oldTask: TaskInfo, newTask: TaskInfo, scheduler: AlarmScheduler){
+fun updateTask(prefsManager: PreferencesManager, oldTask: String, newTask: TaskInfo, scheduler: AlarmScheduler){
     removeTask(prefsManager,oldTask, scheduler)
 
     addNewTask(prefsManager,newTask, scheduler)

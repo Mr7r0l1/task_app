@@ -3,7 +3,6 @@ package com.example.navigation
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ContentTransform
-import androidx.compose.animation.core.EaseInOutExpo
 import androidx.compose.animation.core.EaseOutCubic
 import androidx.compose.animation.core.EaseOutExpo
 import androidx.compose.animation.core.tween
@@ -31,7 +30,7 @@ import com.example.home.HomeScreen
 import com.example.newtask.NewTaskScreen
 import com.example.settings.SettingsScreen
 import com.example.tasks.TasksScreen
-import com.example.utils.AlarmScheduler
+import com.example.model.AlarmScheduler
 import com.example.utils.PreferencesManager
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json

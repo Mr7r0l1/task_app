@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -54,24 +55,29 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.data.TaskInfo
-import com.example.data.TaskStates
-import com.example.data.removeTask
-import com.example.data.updateTask
+import com.example.model.TaskInfo
+import com.example.model.TaskStates
+import com.example.model.removeTask
+import com.example.model.updateTask
 import com.example.design.DeleteButtonColor
 import com.example.design.DoneColor
 import com.example.design.DynamicText
 import com.example.design.isLight
+import com.example.model.AlarmScheduler
 import com.example.utils.PreferencesManager
+import com.example.utils.formatTime
 import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatterBuilder
 import java.time.temporal.ChronoField
 import java.time.temporal.ChronoUnit
+import java.util.Locale
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskViewer(
-    taskInfo: TaskInfo, onClose: () -> Unit, prefsManager: PreferencesManager
+    taskInfo: TaskInfo, onClose: () -> Unit, prefsManager: PreferencesManager, scheduler: AlarmScheduler
 ) {
     var task by remember { mutableStateOf(taskInfo) }
     var expanded by remember { mutableStateOf(false) }
@@ -107,10 +113,10 @@ fun TaskViewer(
 
                     IconButton(onClick = {
                         if(!titleError) {
-                            val timeToSet = if(reminderChecked) selectedTime?.get(ChronoField.MILLI_OF_DAY)?.toLong() else null
-                            val daysToSet = if(reminderChecked) selectedDays else listOf<Int>(0,0,0,0,0,0,0)
+                            val timeToSet = if(reminderChecked) selectedTime?.get(ChronoField.MILLI_OF_DAY)?.toLong() else taskInfo.reminderTimeMillis
+                            val daysToSet = if(reminderChecked) selectedDays else taskInfo.reminderDays
                             val updatedTask = TaskInfo(taskTitle,message,selectedState, reminderTimeMillis = timeToSet, reminderDays = daysToSet)
-                            updateTask(prefsManager,taskInfo,updatedTask)
+                            updateTask(prefsManager,taskInfo.taskId,updatedTask,scheduler)
                             onClose()
                         }
                     }) {
@@ -121,7 +127,7 @@ fun TaskViewer(
 
                     IconButton(onClick = {
                         if(!titleError) {
-                            removeTask(prefsManager,taskInfo)
+                            removeTask(prefsManager,taskInfo.taskId,scheduler)
                             onClose()
                         }
                     }) {
@@ -145,74 +151,6 @@ fun TaskViewer(
                         modifier = Modifier.padding(20.dp)
                     ) {
 
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Start
-                        ) {
-                            Text("Estatus: ")
-                            Box(modifier = Modifier) {
-                                Button(
-                                    colors = ButtonDefaults.buttonColors(containerColor = selectedState.displayColor),
-                                    modifier = Modifier.onGloballyPositioned { coordinates ->
-                                        buttonWidth = coordinates.size.width
-                                    },
-                                    onClick = { expanded = !expanded }) {
-                                    Row(
-                                        modifier = Modifier,
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        DynamicText(
-                                            backgroundColor = selectedState.displayColor,
-                                            text = selectedState.GetDisplayName()
-                                        )
-
-                                        val iconColor =
-                                            if (selectedState.displayColor.isLight()) Color.Black else Color.White
-
-                                        Icon(
-                                            imageVector = Icons.Rounded.KeyboardArrowDown,
-                                            contentDescription = "Descripcion",
-                                            tint = iconColor
-                                        )
-                                    }
-                                }
-                                DropdownMenu(
-                                    modifier = Modifier.width(widthInDp),
-                                    expanded = expanded,
-                                    onDismissRequest = { expanded = false }) {
-                                    TaskStates.entries.forEach { states ->
-                                        DropdownMenuItem(text = {
-                                            Text(
-                                                text = states.GetDisplayName(), style = TextStyle(
-                                                    fontWeight = FontWeight.Bold,
-                                                    fontSize = 16.sp
-                                                )
-                                            )
-                                        }, onClick = {
-                                            expanded = false
-                                            selectedState = states
-
-                                            val newTask = TaskInfo(
-                                                taskInfo.taskTitle,
-                                                taskInfo.taskMessage,
-                                                taskInfo.taskStatus,
-                                                taskInfo.taskId
-                                            )
-
-                                            updateTask(
-                                                prefsManager = prefsManager,
-                                                oldTask = taskInfo,
-                                                newTask = newTask
-                                            )
-                                        })
-                                    }
-                                }
-                            }
-                        }
-
-
                         Spacer(Modifier.height(10.dp))
                         TextField(
                             modifier = Modifier.fillMaxWidth(),
@@ -230,9 +168,9 @@ fun TaskViewer(
                         )
 
                         Spacer(Modifier.height(10.dp))
-                        Column(modifier = Modifier.padding(5.dp)) {
+                        Column(modifier = Modifier.padding(5.dp).weight(1f)) {
                             TextField(
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier.fillMaxSize(),
                                 value = message,
                                 onValueChange = { newText ->
                                     message = newText
@@ -240,19 +178,72 @@ fun TaskViewer(
                                 label = { Text("Mensaje") }
                             )
                         }
-                        Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Start, verticalAlignment = Alignment.CenterVertically) {
-                            Text("Recordatorio")
-                            Checkbox(
-                                checked = reminderChecked,
-                                onCheckedChange = { newVal -> reminderChecked = newVal }
-                            )
+                        Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text("Recordatorio")
+                                Checkbox(
+                                    checked = reminderChecked,
+                                    onCheckedChange = { newVal -> reminderChecked = newVal }
+                                )
+                            }
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Box(modifier = Modifier) {
+                                    Button(
+                                        colors = ButtonDefaults.buttonColors(containerColor = selectedState.displayColor),
+                                        modifier = Modifier.onGloballyPositioned { coordinates ->
+                                            buttonWidth = coordinates.size.width
+                                        },
+                                        onClick = { expanded = !expanded }) {
+                                        Row(
+                                            modifier = Modifier,
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            DynamicText(
+                                                backgroundColor = selectedState.displayColor,
+                                                text = selectedState.GetDisplayName()
+                                            )
+
+                                            val iconColor =
+                                                if (selectedState.displayColor.isLight()) Color.Black else Color.White
+
+                                            Icon(
+                                                imageVector = Icons.Rounded.KeyboardArrowDown,
+                                                contentDescription = "Descripcion",
+                                                tint = iconColor
+                                            )
+                                        }
+                                    }
+                                    DropdownMenu(
+                                        modifier = Modifier.width(widthInDp),
+                                        expanded = expanded,
+                                        onDismissRequest = { expanded = false }) {
+                                        TaskStates.entries.forEach { states ->
+                                            DropdownMenuItem(text = {
+                                                Text(
+                                                    text = states.GetDisplayName(),
+                                                    style = TextStyle(
+                                                        fontWeight = FontWeight.Bold,
+                                                        fontSize = 16.sp
+                                                    )
+                                                )
+                                            }, onClick = {
+                                                expanded = false
+                                                selectedState = states
+                                            })
+                                        }
+                                    }
+                                }
+                            }
                         }
                         AnimatedVisibility(reminderChecked) {
                             Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                                 TextButton(onClick = {
                                     popupShown = true
                                 }) {
-                                    Text(text = selectedTime.toString(), fontSize = 60.sp)
+
+                                    val textToShow = formatTime(selectedTime,prefsManager)
+                                    Text(text = textToShow, fontSize = 60.sp)
                                 }
 
                                 Row(

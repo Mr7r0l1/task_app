@@ -51,9 +51,10 @@ dependencies {
     implementation(project(":features:newTask"))
     implementation(project(":features:settings"))
     implementation(project(":features:tasks"))
-
     implementation(project(":core:utils"))
     implementation(project(":core:data"))
+
+    implementation(project(":core:model"))
     //UI
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

@@ -1,8 +1,9 @@
-package com.example.utils
+package com.example.model
 
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import com.example.utils.PreferencesManager
 
 // Assuming you have a PreferencesManager and ReminderScheduler class in this package (com.example.utils)
 class BootCompletedReceiver : BroadcastReceiver() {

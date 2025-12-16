@@ -1,6 +1,7 @@
 package com.example.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.expandVertically
@@ -17,22 +18,24 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.RemoveRedEye
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,23 +44,37 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.example.data.TaskInfo
+import androidx.compose.ui.unit.sp
 import com.example.design.DeleteButtonColor
 import com.example.design.DynamicText
 import com.example.design.EditButtonColor
+import com.example.design.InProgressColor
+import com.example.design.Purple40
+import com.example.model.TaskInfo
+import com.example.utils.PreferencesManager
+import com.example.utils.formatTime
 import kotlinx.coroutines.launch
+import java.time.LocalTime
+import java.time.temporal.ChronoUnit
 
+val daysOfWeek = listOf("Lun", "Mar", "Mie", "Jue", "Vie", "Sab", "Dom")
 @Composable
 fun QuickTaskCard(
     taskInfo: TaskInfo,
     modifier: Modifier = Modifier,
+    preferencesManager: PreferencesManager,
     onView: () -> Unit,
     innerPadding: PaddingValues = PaddingValues(10.dp)
 ) {
+
 
     Card(
         modifier = modifier, elevation = CardDefaults.cardElevation(4.dp), onClick = {onView()}
@@ -87,6 +104,42 @@ fun QuickTaskCard(
                     )
                 }
             }
+            if(taskInfo.reminderTimeMillis != null){
+                var selectedTime = LocalTime.now().truncatedTo(ChronoUnit.MINUTES)
+                taskInfo.reminderTimeMillis?.let { nonNullMillis ->
+                    selectedTime = LocalTime.ofNanoOfDay(nonNullMillis * 1_000_000L).truncatedTo(ChronoUnit.MINUTES)
+                }
+
+                Column (modifier = Modifier.fillMaxWidth()) {
+                    Row(verticalAlignment = Alignment.CenterVertically){
+                        daysOfWeek.forEachIndexed { index, day ->
+
+                            val isChecked = taskInfo.reminderDays[index] == 1
+                            if(isChecked) {
+                                Text(
+                                    text = day,
+                                    modifier = Modifier.alpha(.8f),
+                                    fontSize = 12.sp,
+                                    fontStyle = FontStyle.Italic
+                                )
+                                Spacer(Modifier.width(5.dp))
+                            }
+                        }
+                    }
+                    Row(verticalAlignment = Alignment.CenterVertically){
+                        Icon(
+                            imageVector = Icons.Default.Timer,
+                            contentDescription = ""
+                        )
+                        Spacer(Modifier.width(5.dp))
+                        val textToShow = formatTime(selectedTime,preferencesManager)
+                        Text(textToShow)
+                        Spacer(Modifier.width(5.dp))
+                    }
+                }
+
+            }
+            
             Card(
                 modifier
                     .fillMaxWidth()
@@ -109,6 +162,7 @@ fun QuickTaskCard(
 @Composable
 fun SwipeableTaskCard(
     taskInfo: TaskInfo,
+    preferencesManager: PreferencesManager,
     innerPadding: PaddingValues = PaddingValues(10.dp),
     onErase: () -> Unit,
     onView: () -> Unit,
@@ -118,6 +172,11 @@ fun SwipeableTaskCard(
 
 
     var clicked by remember { mutableStateOf(false) }
+    val cornerRadius by animateFloatAsState(
+        targetValue = if (clicked) 100f else 25f,
+        animationSpec = tween(durationMillis = 1000),
+        label = "corner_animation_percentage"
+    )
     AnimatedVisibility(
         visible = visible,
         exit = shrinkVertically() + fadeOut(),
@@ -156,12 +215,13 @@ fun SwipeableTaskCard(
 
                     Box(
                         modifier = Modifier.background(
-                            taskInfo.taskStatus.displayColor, shape = RoundedCornerShape(25)
+                            taskInfo.taskStatus.displayColor, shape = RoundedCornerShape(cornerRadius)
                         )
                     ) {
                         DynamicText(
                             text = taskInfo.taskStatus.GetDisplayName(),
                             backgroundColor = taskInfo.taskStatus.displayColor,
+                            fontSize = 10,
                             padding = 5
                         )
                     }
@@ -211,21 +271,59 @@ fun SwipeableTaskCard(
                     enter = expandVertically() + fadeIn(),
                     exit = shrinkVertically() + fadeOut(),
                 ) {
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 10.dp),
-                        onClick = {onView()},
-                        border = CardDefaults.outlinedCardBorder(enabled = true)
-                    ) {
+                    Column {
+                        if(taskInfo.reminderTimeMillis != null){
+                            var selectedTime = LocalTime.now().truncatedTo(ChronoUnit.MINUTES)
+                            taskInfo.reminderTimeMillis?.let { nonNullMillis ->
+                                selectedTime = LocalTime.ofNanoOfDay(nonNullMillis * 1_000_000L).truncatedTo(ChronoUnit.MINUTES)
+                            }
 
-                        Text(
+                            Column (modifier = Modifier.fillMaxWidth()) {
+                                Row(verticalAlignment = Alignment.CenterVertically){
+                                    daysOfWeek.forEachIndexed { index, day ->
+
+                                        val isChecked = taskInfo.reminderDays[index] == 1
+                                        if(isChecked) {
+                                            Text(
+                                                text = day,
+                                                modifier = Modifier.alpha(.8f),
+                                                fontSize = 12.sp,
+                                                fontStyle = FontStyle.Italic
+                                            )
+                                            Spacer(Modifier.width(5.dp))
+                                        }
+                                    }
+                                }
+                                Row(verticalAlignment = Alignment.CenterVertically){
+                                    Icon(
+                                        imageVector = Icons.Default.Timer,
+                                        contentDescription = ""
+                                    )
+                                    Spacer(Modifier.width(5.dp))
+                                    val textToShow = formatTime(selectedTime,preferencesManager)
+                                    Text(textToShow)
+                                    Spacer(Modifier.width(5.dp))
+                                }
+                            }
+
+                        }
+                        Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(10.dp),
+                                .padding(top = 10.dp),
+                            onClick = { onView() },
+                            border = CardDefaults.outlinedCardBorder(enabled = true)
+                        ) {
 
-                            maxLines = 3,
-                            text = if (!taskInfo.taskMessage.isEmpty()) taskInfo.taskMessage else "Vacio...")
+                            Text(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(10.dp),
+
+                                maxLines = 3,
+                                text = if (!taskInfo.taskMessage.isEmpty()) taskInfo.taskMessage else "Vacio..."
+                            )
+                        }
                     }
                 }
             }
@@ -235,7 +333,7 @@ fun SwipeableTaskCard(
 
 @Composable
 fun AnimatedTaskCard(
-    task: TaskInfo, onErase: () -> Unit,onView: () -> Unit, isErased: Boolean
+    task: TaskInfo,preferencesManager: PreferencesManager, onErase: () -> Unit,onView: () -> Unit, isErased: Boolean
 ) {
     AnimatedVisibility(
         visible = !isErased,
@@ -244,7 +342,7 @@ fun AnimatedTaskCard(
     ) {
         Column {
             SwipeableTaskCard(
-                taskInfo = task, onErase = onErase, onView = onView, visible = true
+                taskInfo = task,preferencesManager = preferencesManager, onErase = onErase, onView = onView, visible = true,
             )
         }
     }

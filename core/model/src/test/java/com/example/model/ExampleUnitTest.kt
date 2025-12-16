@@ -1,4 +1,4 @@
-package com.example.module
+package com.example.model
 
 import org.junit.Test
 

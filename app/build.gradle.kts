@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+
+    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 
@@ -54,7 +56,7 @@ dependencies {
     implementation(project(":core:utils"))
     implementation(project(":navigation"))
     implementation(project(":features:taskviewer"))
-
+    implementation(project(":core:model"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.activity.compose)

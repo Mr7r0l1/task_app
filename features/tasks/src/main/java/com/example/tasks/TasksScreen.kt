@@ -24,11 +24,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.components.AnimatedTaskCard
 import com.example.data.ScreenRoutes
-import com.example.data.TaskHolder
-import com.example.data.TaskInfo
-import com.example.data.getTasks
-import com.example.data.removeTask
-import com.example.utils.AlarmScheduler
+import com.example.model.TaskHolder
+import com.example.model.TaskInfo
+import com.example.model.getTasks
+import com.example.model.removeTask
+import com.example.model.AlarmScheduler
 import com.example.utils.PreferencesManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -71,13 +71,14 @@ fun TasksScreen(
                                     scope.launch {
                                         erasedTaskIds.add(task.taskId)
                                         delay(300)
-                                        removeTask(prefs, task,scheduler)
+                                        removeTask(prefs, task.taskId,scheduler)
                                         updateTasks()
                                         erasedTaskIds.remove(task.taskId)
                                     }
                                 },
                                 onView = {onView(task,ScreenRoutes.TASKS)},
-                                isErased = erasedTaskIds.contains(task.taskId)
+                                isErased = erasedTaskIds.contains(task.taskId),
+                                preferencesManager = prefs
                             )
                             if(index != tasks.list.count() -1)
                                 Spacer(Modifier.height(10.dp))
@@ -89,7 +90,7 @@ fun TasksScreen(
                             .fillMaxWidth()
                             .padding(20.dp)
                         ,
-                        text = "No hay tareas creadas",
+                        text = "No hay tareas por ahora...",
                         textAlign = TextAlign.Center
                     )
                 }

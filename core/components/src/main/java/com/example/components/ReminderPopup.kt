@@ -13,10 +13,11 @@ fun ReminderPopup(
     onDismissRequest: () -> Unit,
     onTimeSelected: (LocalTime) -> Unit
 ) {
-    // 1. Create a state object to hold and manage the time selection
+    val curHour = LocalTime.now().hour
+    val curMin = LocalTime.now().minute
     val timePickerState = rememberTimePickerState(
-        initialHour = 9,
-        initialMinute = 0,
+        initialHour = curHour,
+        initialMinute = curMin,
         is24Hour = false
     )
 

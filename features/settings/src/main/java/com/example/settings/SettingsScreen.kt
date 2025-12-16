@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -28,27 +29,40 @@ fun SettingsScreen(
     modifier: Modifier,
     onChangeTheme: (Boolean) -> Unit
 ) {
-    var isToggled by rememberSaveable { mutableStateOf(prefs.GetTheme()) }
-
-
+    var isDarkModeToggled by rememberSaveable { mutableStateOf(prefs.getTheme()) }
+    var is24HourToggled by rememberSaveable { mutableStateOf(prefs.get24HourFormat()) }
 
     Box(modifier
     ) {
         Column(Modifier
-            .fillMaxSize()
+            .fillMaxHeight()
+            .fillMaxWidth(1f)
             .padding(20.dp)
             ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                horizontalArrangement = Arrangement.SpaceBetween) {
                 Text("Modo oscuro")
                 Switch(
-                    checked = isToggled,
+                    checked = isDarkModeToggled,
                     onCheckedChange = {
-                        newState -> isToggled = newState
+                        newState -> isDarkModeToggled = newState
                         onChangeTheme(newState)
-                        prefs.SaveTheme(isToggled)
+                        prefs.saveTheme(isDarkModeToggled)
+                    }
+                )
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween) {
+                Text("Formato de 24 horas")
+                Switch(
+                    checked = is24HourToggled,
+                    onCheckedChange = {
+                            newState -> is24HourToggled = newState
+                        prefs.save24HourFormat(is24HourToggled)
                     }
                 )
             }
