@@ -19,16 +19,16 @@ Reminder Book es una aplicación nativa de Android diseñada para la gestión ef
 
 La lógica del agendamiento de alarmas y cálculo de tiempos se encuentra centralizada en el componente `AlarmScheduler`, optimizando el uso de la API de `Calendar` de Android para evitar wakelocks innecesarios.
 
-<img height="1000" alt="Screenshot_20260527_121943" src="https://github.com/user-attachments/assets/a7051f1b-b335-4236-8738-e38ee68b56cb" />  <br />
+<img height="1000" alt="Screenshot_20260527_121943" src="https://github.com/user-attachments/assets/35672dfd-5bcb-4537-a6d5-a9d40355f3a8" />  <br />
 
-<img height="1000" alt="Screenshot_20260527_122330" src="https://github.com/user-attachments/assets/cb58e630-3f10-4bb3-acbd-c33ec72a8c32" />  <br />
+<img height="1000" alt="Screenshot_20260527_122330" src="https://github.com/user-attachments/assets/fc6e88c8-4528-4323-9d23-28c4225ce7f2" />  <br />
 
-<img height="1000" alt="Screenshot_20260527_122342" src="https://github.com/user-attachments/assets/e9663ecc-a2e3-42a7-892c-a8880d8d5042" />  <br />
+<img height="1000" alt="Screenshot_20260527_122342" src="https://github.com/user-attachments/assets/8be2166f-197e-4670-8098-a8ddcbffd42f" />  <br />
 
 <img height="1000" alt="Screenshot_20260527_122349" src="https://github.com/user-attachments/assets/9f43ed71-aa24-4d10-9f48-35eafdf5e32c" />  <br />
 
-<img height="1000" alt="Screenshot_20260527_122359" src="https://github.com/user-attachments/assets/8be2166f-197e-4670-8098-a8ddcbffd42f" />  <br />
+<img height="1000" alt="Screenshot_20260527_122359" src="https://github.com/user-attachments/assets/e9663ecc-a2e3-42a7-892c-a8880d8d5042" />  <br />
 
-<img height="1000" alt="Screenshot_20260527_122405" src="https://github.com/user-attachments/assets/fc6e88c8-4528-4323-9d23-28c4225ce7f2" />  <br />
+<img height="1000" alt="Screenshot_20260527_122405" src="https://github.com/user-attachments/assets/cb58e630-3f10-4bb3-acbd-c33ec72a8c32" />  <br />
 
-<img height="1000" alt="Screenshot_20260527_122422" src="https://github.com/user-attachments/assets/35672dfd-5bcb-4537-a6d5-a9d40355f3a8" />
+<img height="1000" alt="Screenshot_20260527_122422" src="https://github.com/user-attachments/assets/a7051f1b-b335-4236-8738-e38ee68b56cb" />
