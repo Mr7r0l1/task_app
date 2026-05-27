@@ -12,13 +12,11 @@ object NotificationHelper {
     private const val CHANNEL_ID = "TASK_REMINDER_CHANNEL"
     private const val CHANNEL_NAME = "Recordatorios"
 
-    /**
-     * Creates the Notification Channel. Required for Android O (API 26) and higher.
-     */
     fun createNotificationChannel(context: Context) {
         val importance = NotificationManager.IMPORTANCE_HIGH
         val channel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, importance).apply {
             description = "Recordatorios de tus tareas."
+
         }
         // Register the channel with the system
         val notificationManager: NotificationManager =
@@ -26,22 +24,19 @@ object NotificationHelper {
         notificationManager.createNotificationChannel(channel)
     }
 
-    /**
-     * Builds and displays the notification.
-     */
     fun showNotification(context: Context, title: String, message: String, taskId: String,contentPendingIntent: PendingIntent){
         // Use the taskId's hash code as the notification ID for uniqueness
         val notificationId = taskId.hashCode()
 
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(android.R.drawable.ic_dialog_info) // Replace with your app icon
+            .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setContentTitle("Recordatorio: $title")
             .setContentText(message)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
             .setAutoCancel(true)
             .setStyle(NotificationCompat.BigTextStyle().bigText(message))
-            .setContentIntent(contentPendingIntent) // <-- Used for click action
-            .setAutoCancel(true) // Ensures the notification disappears when clicked
+            .setContentIntent(contentPendingIntent)
+            .setAutoCancel(true)
 
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(notificationId, builder.build())

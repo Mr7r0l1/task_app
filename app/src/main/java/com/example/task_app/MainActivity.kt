@@ -82,7 +82,7 @@ class MainActivity : ComponentActivity() {
             if(localTaskId != null)
                 taskToView = getTaskById(preferencesManager,localTaskId)
 
-            val startDest = if(taskToView == null) "pager" else "task_viewer/${ScreenRoutes.HOME.ordinal}/${Json.encodeToString(taskToViewId)}"
+            val startDest = if(taskToView == null) "pager" else "task_viewer/${ScreenRoutes.HOME.ordinal}/${Json.encodeToString(taskToView)}"
             Task_appTheme(darkTheme) {
                 NavHost(navController = navController, startDestination = startDest) {
                     composable(route = "pager") {

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="no_pending_tasks">No hay tareas pendientes</string>
+    <string name="pending">Pendientes</string>
+    <string name="finished">Terminadas</string>
+    <string name="no_finished_tasks">No hay tareas terminadas</string>
+</resources>

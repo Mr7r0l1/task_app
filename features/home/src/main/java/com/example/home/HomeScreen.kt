@@ -22,6 +22,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -65,7 +66,9 @@ fun HomeScreen(
 
     Column(modifier.padding(10.dp)) {
 
-        TextButton(modifier = Modifier.fillMaxWidth(), onClick = { pendingShown = !pendingShown }) {Text(modifier = Modifier.fillMaxWidth(),text = "Pendientes", textAlign = TextAlign.Start)}
+        TextButton(modifier = Modifier.fillMaxWidth(), onClick = { pendingShown = !pendingShown }) {Text(modifier = Modifier.fillMaxWidth(),text = stringResource(
+            R.string.pending
+        ), textAlign = TextAlign.Start)}
         AnimatedVisibility(pendingShown) {
             Card(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
@@ -94,7 +97,7 @@ fun HomeScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(20.dp),
-                            text = "No hay tareas pendientes",
+                            text = stringResource(R.string.no_pending_tasks),
                             textAlign = TextAlign.Center
                         )
                     }
@@ -103,7 +106,9 @@ fun HomeScreen(
         }
         Spacer(Modifier.height(10.dp))
 
-        TextButton(modifier = Modifier.fillMaxWidth(), onClick = { finishedShown = !finishedShown }) {Text(modifier = Modifier.fillMaxWidth(),text = "Terminadas", textAlign = TextAlign.Start)}
+        TextButton(modifier = Modifier.fillMaxWidth(), onClick = { finishedShown = !finishedShown }) {Text(modifier = Modifier.fillMaxWidth(),text = stringResource(
+            R.string.finished
+        ), textAlign = TextAlign.Start)}
         AnimatedVisibility(finishedShown) {
             Card(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
@@ -132,7 +137,7 @@ fun HomeScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(20.dp),
-                            text = "No hay tareas terminadas",
+                            text = stringResource(R.string.no_finished_tasks),
                             textAlign = TextAlign.Center
                         )
                     }

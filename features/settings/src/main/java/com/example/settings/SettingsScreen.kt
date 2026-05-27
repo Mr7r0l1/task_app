@@ -18,6 +18,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.utils.PreferencesManager
 
@@ -43,7 +44,7 @@ fun SettingsScreen(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween) {
-                Text("Modo oscuro")
+                Text(stringResource(R.string.dark_mode))
                 Switch(
                     checked = isDarkModeToggled,
                     onCheckedChange = {
@@ -57,7 +58,7 @@ fun SettingsScreen(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween) {
-                Text("Formato de 24 horas")
+                Text(stringResource(R.string.hour_format_check))
                 Switch(
                     checked = is24HourToggled,
                     onCheckedChange = {
